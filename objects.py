@@ -7,6 +7,8 @@ class Player(pygame.sprite.Sprite):
 		self.x_pos = xpos
 		self.y_pos = 240
 		self.height = 60
+		self.width = 10
+		self.dir = 'N'
 
 	def moveUp(self):
 		self.y_pos += 2
@@ -14,11 +16,14 @@ class Player(pygame.sprite.Sprite):
 	def moveDown(self):
 		self.y_pos -= 2
 		
-	def tick(self, dir):
-		if dir == 'U':
+	def tick(self):
+		if self.dir == 'U':
 			moveUp()
-		elif dir == 'D':
+		elif self.dir == 'D':
 			moveDown()
+			
+	def getRect(self):
+		return (self.x_pos - self.width / 2, self.y_pos + self.height / 2, self.width, self.height)
 		
 		
 class Ball(pygame.sprite.Sprite):

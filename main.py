@@ -17,9 +17,9 @@ class GameSpace:
 		self.white = 255, 255, 255
 		self.screen = pygame.display.set_mode(self.size)
 
-		self.player1 = Player(40, self)
-		self.player2 = Player(600, self)
-		self.ball = Ball(self, 5.0)
+		self.player1 = Player(40)
+		self.player2 = Player(600)
+		self.ball = Ball(5.0)
 
 		lc = LoopingCall(self.game_loop_iterate)
 		lc.start(1.0/60)	
