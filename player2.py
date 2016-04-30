@@ -29,7 +29,6 @@ class ClientConnection (Protocol):
 			game = json.loads(data.split('?')[0])
 		except:
 			return
-		print game
 		p1 = game["players"]["p1"]
 		p2 = game["players"]["p2"]
 		
@@ -53,14 +52,9 @@ class ClientConnection (Protocol):
 		
 		#send back key presses
 		keysPressed = pygame.key.get_pressed()
-		if keysPressed[pygame.K_UP]:
-			up = 1
-		else:
-			up = 0
-		if keysPressed[pygame.K_DOWN]:
-			down = 1
-		else:
-			down = 0
+		up = keysPressed[pygame.K_UP]
+		down = keysPressed[pygame.K_DOWN]
+		print str(up) + "|" + str(down)
 		self.transport.write( str(up) + "|" + str(down) + "?" )
 		
 	def connectionMade(self):
