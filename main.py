@@ -37,6 +37,15 @@ class GameSpace:
 				os._exit(0)
 
 		####
+		# check current keydown
+		####
+		keys_pressed = pygame.key.get_pressed()
+		if keys_pressed[pygame.K_UP]:
+			self.player1.moveUp()
+		if keys_pressed[pygame.K_DOWN]:
+			self.player1.moveDown()
+
+		####
 		# Check for collision
 		####
 		if self.ball.y_pos <= self.ball.radius or self.ball.y_pos >= self.height - self.ball.radius:
