@@ -55,11 +55,17 @@ class GameSpace:
 			if self.ball.y_pos >= self.player1.y_pos - (self.player1.height / 2.0) \
 			   and self.ball.y_pos <= self.player1.y_pos + (self.player1.height / 2.0):
 				 self.ball.hitPlayer(self.player1.y_pos, self.player1.height)
+			else:
+				self.player2.score += 1
+				self.ball = Ball(5.0)
 		elif self.ball.x_pos + self.ball.radius >= self.player2.x_pos - (self.player2.width / 2.0):
 			# ball is close to the right side of player 2
 			if self.ball.y_pos >= self.player2.y_pos - (self.player2.height / 2.0) \
 			   and self.ball.y_pos <= self.player2.y_pos + (self.player2.height / 2.0):
 				 self.ball.hitPlayer(self.player2.y_pos, self.player2.height)
+			else:
+				self.player1.score += 1
+				self.ball = Ball(5.0)
 
 		####
 		# Update objects
