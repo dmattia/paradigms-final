@@ -6,10 +6,14 @@ PLAYER_TWO_PORT = 40083
 
 player_one_connected = False
 player_two_connected = False
+p1Server = None
+p2Server = None
 
 class P1ServerFactory(Factory):
 	def buildProtocol(self, addr):
-		return P1Server(addr)
+		global p1Server
+		p1Server = P1Server(addr)
+		return p1Server
 
 class P1Server(Protocol):
 	def __init__(self, addr):
@@ -32,7 +36,9 @@ class P1Server(Protocol):
 
 class P2ServerFactory(Factory):
 	def buildProtocol(self, addr):
-		return P2Server(addr)
+		global p2Server
+		p2Server = P2Server(addr)
+		return p2Server
 
 class P2Server(Protocol):
 	def __init__(self, addr):

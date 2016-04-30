@@ -8,6 +8,7 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
 
+from servers import *
 from objects import Player, Ball
 
 class GameSpace:
