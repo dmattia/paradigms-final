@@ -2,19 +2,22 @@ import pygame
 import random
 
 class Player(pygame.sprite.Sprite):
-	def __init__(self, xpos):
+	def __init__(self, xpos, gs):
 		pygame.sprite.Sprite.__init__(self)
 		self.x_pos = xpos
 		self.y_pos = 240
 		self.height = 70
 		self.width = 10
 		self.score = 0
+		self.gameState = gs
 
 	def moveUp(self):
-		self.y_pos -= 2
+		if self.y_pos > self.height / 2.0:
+			self.y_pos -= 4.0
 		
 	def moveDown(self):
-		self.y_pos += 2
+		if self.y_pos < self.gameState.height - self.height / 2.0:
+			self.y_pos += 4.0
 		
 	def tick(self):
 		pass
@@ -26,8 +29,8 @@ class Ball(pygame.sprite.Sprite):
 	def __init__(self,mult):
 		self.x_pos = 320.0
 		self.y_pos = 240.0
-		self.y_speed = random.randrange(-1,1)
-		xRand = random.randrange(-1,1)
+		self.y_speed = random.random() * 2 - 1
+		xRand = random.randrange(-1.0,1.0)
 		if xRand < 0:
 			self.x_speed = -1.0
 		else:
