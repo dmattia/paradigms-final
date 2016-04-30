@@ -78,6 +78,13 @@ class GameSpace:
 		pygame.draw.rect(self.screen, self.white, self.player2.getRect())
 		pygame.draw.circle(self.screen, self.red, self.ball.getPos(), self.ball.radius)
 
+		####
+		# Draw Score
+		####
+		myfont = pygame.font.SysFont("monospace", 42)
+		score_label = myfont.render(str(player1.score) + " | " + str(player2.score), 1, self.white)
+		screen.blit(score_label, (320, 50))
+
 		pygame.display.flip()
 
 	def to_json(self):
