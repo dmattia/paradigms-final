@@ -35,13 +35,13 @@ class ClientConnection (Protocol):
 		# determine areas to draw players and ball
 		p1rect = getRect(p1["x_pos"], p1["y_pos"], p1["width"], p1["height"])
 		p2rect = getRect(p2["x_pos"], p2["y_pos"], p2["width"], p2["height"])
-		ballPos = (game["ball"]["x_pos"], game["ball"]["y_pos"])
+		ballPos = (int(game["ball"]["x_pos"]), int(game["ball"]["y_pos"]))
 		
 		# draw background, players and ball
 		self.screen.fill(self.black)
 		pygame.draw.rect(self.screen, self.white, p1rect)
 		pygame.draw.rect(self.screen, self.white, p2rect)
-		pygame.draw.circle(self.screen, self.red, ballPos, game["ball"]["radius"])
+		pygame.draw.circle(self.screen, self.red, ballPos, int(game["ball"]["radius"]))
 		
 		# draw the score
 		myfont = pygame.font.SysFont("monospace", 42)
