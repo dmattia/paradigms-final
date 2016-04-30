@@ -1,15 +1,21 @@
-import sys 
 import os
 import json
 import pygame
 from pygame.locals import *
 
-from twisted.internet.protocol import Protocol
+from twisted.internet.protocol import Protocol, Factory
 from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
 
-from servers import *
 from objects import Player, Ball
+
+PLAYER_ONE_PORT = 40075
+PLAYER_TWO_PORT = 40083
+
+player_one_connected = False
+player_two_connected = False
+p1Server = None
+p2Server = None
 
 class GameSpace:
 	def main(self):
@@ -70,6 +76,7 @@ class GameSpace:
 				self.player1.score += 1
 				self.ball = Ball(self.speed)
 
+"""
 		####
 		# Update objects
 		####
@@ -92,7 +99,7 @@ class GameSpace:
 		score_label = myfont.render(str(self.player1.score) + " | " + str(self.player2.score), 1, self.white)
 		self.screen.blit(score_label, (260, 20))
 
-		pygame.display.flip()
+		pygame.display.flip()"""
 
 	def to_json(self):
 		""" Creates a dictionary @gsData that represents the gamestate.
@@ -110,6 +117,69 @@ class GameSpace:
 		print json.dumps(gsData)
 		return json.dumps(gsData)
 
+
+class P1ServerFactory(Factory):
+	def buildProtocol(self, addr):
+		global p1Server
+		p1Server = P1Server(addr)
+		return p1Server
+
+class P1Server(Protocol):
+	def __init__(self, addr):
+		self.addr = addr
+
+	def dataReceived(self, data):
+		pass
+
+	def connectionMade(self):
+		print "Player 1 connected"
+		global player_one_connected, player_two_connected
+		player_one_connected = True
+		if player_two_connected:
+			print "Both players connected"
+			gs = GameSpace()
+			gs.main()
+
+	def connectionLost(self, reason):
+		print "Connection lost to player 1"
+		global player_one_connected, player_two_connected
+		player_one_connected = False
+
+class P2ServerFactory(Factory):
+	def buildProtocol(self, addr):
+		global p2Server
+		p2Server = P2Server(addr)
+		return p2Server
+
+class P2Server(Protocol):
+	def __init__(self, addr):
+		self.addr = addr
+
+	def dataReceived(self, data):
+		pass
+
+	def connectionMade(self):
+		print "Player 2 connected"
+		global player_one_connected, player_two_connected
+		player_two_connected = True
+		if player_one_connected:
+			print "Both players connected"
+			gs = GameSpace()
+			gs.main()
+
+	def connectionLost(self, reason):
+		print "Connection lost to player 2"
+		global player_one_connected, player_two_connected
+		player_two_connected = False
+
+
 if __name__ == '__main__':
-	gs = GameSpace()
-	gs.main()
+	reactor.listenTCP(
+		PLAYER_ONE_PORT,
+		P1ServerFactory()
+	)
+	reactor.listenTCP(
+		PLAYER_TWO_PORT,
+		P2ServerFactory()
+	)
+	reactor.run()
