@@ -1,7 +1,7 @@
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
-import json
+import yaml
 import pygame
 
 server = 'student00.cse.nd.edu'
@@ -27,7 +27,7 @@ class ClientConnection (Protocol):
 		print data.split('?')[0]
 		print ""
 		# get game data sent over
-		game = json.loads(data.split('?')[0])
+		game = yaml.safe_load(data.split('?')[0])
 		print game
 		p1 = game["players"]["p1"]
 		p2 = game["players"]["p2"]
