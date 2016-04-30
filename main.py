@@ -38,6 +38,8 @@ class GameSpace:
 		pygame.draw.rect(self.screen, self.white, self.player2.getRect())
 		pygame.draw.circle(self.screen, self.white, self.ball.getPos(), self.ball.radius)
 
+		pygame.display.flip()
+
 	def to_json(self):
 		pass
 
