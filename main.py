@@ -17,10 +17,11 @@ class GameSpace:
 		self.white = 255, 255, 255
 		self.red = 255, 0, 0
 		self.screen = pygame.display.set_mode(self.size)
+		self.speed = 4.0
 
-		self.player1 = Player(40)
-		self.player2 = Player(600)
-		self.ball = Ball(5.0)
+		self.player1 = Player(40, self)
+		self.player2 = Player(600, self)
+		self.ball = Ball(self.speed)
 
 		lc = LoopingCall(self.game_loop_iterate)
 		lc.start(1.0/60)	
@@ -57,7 +58,7 @@ class GameSpace:
 				 self.ball.hitPlayer(self.player1.y_pos, self.player1.height)
 			else:
 				self.player2.score += 1
-				self.ball = Ball(5.0)
+				self.ball = Ball(self.speed)
 		elif self.ball.x_pos + self.ball.radius >= self.player2.x_pos - (self.player2.width / 2.0):
 			# ball is close to the right side of player 2
 			if self.ball.y_pos >= self.player2.y_pos - (self.player2.height / 2.0) \
@@ -65,7 +66,7 @@ class GameSpace:
 				 self.ball.hitPlayer(self.player2.y_pos, self.player2.height)
 			else:
 				self.player1.score += 1
-				self.ball = Ball(5.0)
+				self.ball = Ball(self.speed)
 
 		####
 		# Update objects
