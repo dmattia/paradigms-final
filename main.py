@@ -83,11 +83,11 @@ class GameSpace:
 
 		global p1Server, p2Server
 		if p1Server.transport:
-			p1Server.transport.write(self.to_json())
+			p1Server.transport.write(self.to_json() + "?")
 		else:
 			print "p1 server has no transport yet"
 		if p2Server.transport:
-			p2Server.transport.write(self.to_json())
+			p2Server.transport.write(self.to_json() + "?")
 		else:
 			print "p2 server has no transport yet"
 
