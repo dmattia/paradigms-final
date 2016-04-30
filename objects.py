@@ -6,7 +6,7 @@ class Player(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 		self.x_pos = xpos
 		self.y_pos = 240
-		self.height = 60
+		self.height = 70
 		self.width = 10
 		self.dir = 'N'
 
@@ -23,23 +23,22 @@ class Player(pygame.sprite.Sprite):
 			moveDown()
 			
 	def getRect(self):
-		return (self.x_pos - self.width / 2, self.y_pos + self.height / 2, self.width, self.height)
-		
+		return pygame.Rect(self.x_pos - self.width / 2, self.y_pos - self.height / 2, self.width, self.height)
 		
 class Ball(pygame.sprite.Sprite):
 	def __init__(self,mult):
 		self.x_pos = 320.0
 		self.y_pos = 240.0
 		self.y_speed = random.randrange(-1,1)
+
+		# for testing
+		self.y_speed = 0
+
 		xRand = random.randrange(-1,1)
 		if xRand < 0:
 			self.x_speed = -1.0
 		else:
 			self.x_speed = 1.0
-
-		# remove
-		self.x_speed = 0.0
-		
 		self.speed_multiplier = mult
 		self.radius = 5
 		
