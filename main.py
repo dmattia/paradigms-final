@@ -15,6 +15,7 @@ class GameSpace:
 		self.size = self.width, self.height = 640, 480
 		self.black = 0, 0, 0
 		self.white = 255, 255, 255
+		self.red = 255, 0, 0
 		self.screen = pygame.display.set_mode(self.size)
 
 		self.player1 = Player(40)
@@ -65,7 +66,7 @@ class GameSpace:
 		self.screen.fill(self.black)
 		pygame.draw.rect(self.screen, self.white, self.player1.getRect())
 		pygame.draw.rect(self.screen, self.white, self.player2.getRect())
-		pygame.draw.circle(self.screen, self.white, self.ball.getPos(), self.ball.radius)
+		pygame.draw.circle(self.screen, self.red, self.ball.getPos(), self.ball.radius)
 
 		pygame.display.flip()
 
