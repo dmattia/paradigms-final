@@ -76,7 +76,7 @@ class GameSpace:
 				self.player1.score += 1
 				self.ball = Ball(self.speed)
 
-"""
+		"""
 		####
 		# Update objects
 		####
@@ -99,7 +99,8 @@ class GameSpace:
 		score_label = myfont.render(str(self.player1.score) + " | " + str(self.player2.score), 1, self.white)
 		self.screen.blit(score_label, (260, 20))
 
-		pygame.display.flip()"""
+		pygame.display.flip()
+		"""
 
 	def to_json(self):
 		""" Creates a dictionary @gsData that represents the gamestate.
