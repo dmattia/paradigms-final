@@ -7,7 +7,7 @@ import pygame
 server = 'student00.cse.nd.edu'
 port = 40075
 
-def getRect(self, x_pos, y_pos, width, height):
+def getRect(x_pos, y_pos, width, height):
 	return pygame.Rect(x_pos - width / 2, y_pos - height / 2, width, height)
 
 class ClientConnFactory(ClientFactory):
