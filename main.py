@@ -16,17 +16,12 @@ player_one_connected = False
 player_two_connected = False
 p1Server = None
 p2Server = None
+gs = None
 
 class GameSpace:
 	def main(self):
 		pygame.init()
 		self.size = self.width, self.height = 640, 480
-		"""
-		self.black = 0, 0, 0
-		self.white = 255, 255, 255
-		self.red = 255, 0, 0
-		self.screen = pygame.display.set_mode(self.size)
-		"""
 		self.speed = 4.0
 
 		self.player1 = Player(40, self)
@@ -38,27 +33,6 @@ class GameSpace:
 		#self.lc.stop()
 
 	def game_loop_iterate(self):
-		####
-		# Check for exit
-		####
-		"""
-		for event in pygame.event.get():
-			if event.type == QUIT:
-				pygame.quit()
-				os._exit(0)
-		"""
-
-		####
-		# check current keydown
-		####
-		"""
-		keys_pressed = pygame.key.get_pressed()
-		if keys_pressed[pygame.K_UP]:
-			self.player1.moveUp()
-		if keys_pressed[pygame.K_DOWN]:
-			self.player1.moveDown()
-		"""
-
 		####
 		# Check for collision
 		####
@@ -98,25 +72,6 @@ class GameSpace:
 		else:
 			print "p2 server has no transport yet"
 
-		"""
-		####
-		# Draw objects
-		####
-		self.screen.fill(self.black)
-		pygame.draw.rect(self.screen, self.white, self.player1.getRect())
-		pygame.draw.rect(self.screen, self.white, self.player2.getRect())
-		pygame.draw.circle(self.screen, self.red, self.ball.getPos(), self.ball.radius)
-
-		####
-		# Draw Score
-		####
-		myfont = pygame.font.SysFont("monospace", 42)
-		score_label = myfont.render(str(self.player1.score) + " | " + str(self.player2.score), 1, self.white)
-		self.screen.blit(score_label, (260, 20))
-
-		pygame.display.flip()
-		"""
-
 	def to_json(self):
 		""" Creates a dictionary @gsData that represents the gamestate.
 				Important for sending game data over our server so that a client
@@ -144,7 +99,10 @@ class P1Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
-		pass
+		upPressed = data.split("?")[0].split("|")[0]
+		downPressed = data.split("?")[0].split("|")[1]
+		print "Up: " + str(upPressed)
+		print "Down: " + str(downPressed)
 
 	def connectionMade(self):
 		print "Player 1 connected"
@@ -152,6 +110,7 @@ class P1Server(Protocol):
 		player_one_connected = True
 		if player_two_connected:
 			print "Both players connected"
+			global gs
 			gs = GameSpace()
 			gs.main()
 
@@ -179,6 +138,7 @@ class P2Server(Protocol):
 		player_two_connected = True
 		if player_one_connected:
 			print "Both players connected"
+			global gs
 			gs = GameSpace()
 			gs.main()
 
