@@ -81,6 +81,13 @@ class GameSpace:
 				self.player1.score += 1
 				self.ball = Ball(self.speed)
 
+		####
+		# Update objects
+		####
+		self.player1.tick()
+		self.player2.tick()
+		self.ball.tick()
+
 		global p1Server, p2Server
 		if p1Server.transport:
 			p1Server.transport.write(self.to_json() + "?")
@@ -92,13 +99,6 @@ class GameSpace:
 			print "p2 server has no transport yet"
 
 		"""
-		####
-		# Update objects
-		####
-		self.player1.tick()
-		self.player2.tick()
-		self.ball.tick()
-
 		####
 		# Draw objects
 		####
