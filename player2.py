@@ -28,24 +28,24 @@ class ClientConnection (Protocol):
 		print ""
 		# get game data sent over
 		game = json.loads(data)
-		game = game[0]
-		p1 = game.players.p1
-		p2 = game.players.p2
+		print game
+		p1 = game["players"]["p1"]
+		p2 = game["players"]["p2"]
 		
 		# determine areas to draw players and ball
-		p1rect = getRect(p1.x_pos, p1.y_pos, p1.width, p1.height)
-		p2rect = getRect(p2.x_pos, p2.y_pos, p2.width, p2.height)
-		ballPos = (game.ball.x_pos, game.ball.y_pos)
+		p1rect = getRect(p1["x_pos"], p1["y_pos"], p1["width"], p1["height"])
+		p2rect = getRect(p2["x_pos"], p2["y_pos"], p2["width"], p2["height"])
+		ballPos = (game["ball"]["x_pos"], game["ball"]["y_pos"])
 		
 		# draw background, players and ball
 		self.screen.fill(self.black)
 		pygame.draw.rect(self.screen, self.white, p1rect)
 		pygame.draw.rect(self.screen, self.white, p2rect)
-		pygame.draw.circle(self.screen, self.red, ballPos, game.ball.radius)
+		pygame.draw.circle(self.screen, self.red, ballPos, game["ball"]["radius"])
 		
 		# draw the score
 		myfont = pygame.font.SysFont("monospace", 42)
-		score_label = myfont.render(str(p1.score) + " | " + str(p2.score), 1, self.white)
+		score_label = myfont.render(str(p1["score"]) + " | " + str(p2["score"]), 1, self.white)
 		self.screen.blit(score_label, (260, 20))
 
 		pygame.display.flip()
