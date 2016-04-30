@@ -1,7 +1,6 @@
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
-import yaml
 import pygame
 
 server = 'student00.cse.nd.edu'
@@ -29,23 +28,23 @@ class ClientConnection (Protocol):
 		# get game data sent over
 		game = yaml.safe_load(data.split('?')[0])
 		print game
-		p1 = game["players"]["p1"]
-		p2 = game["players"]["p2"]
+		p1 = game[unicode(players)][unicode("p1")]
+		p2 = game[unicode("players")][unicode("p2")]
 		
 		# determine areas to draw players and ball
-		p1rect = getRect(p1["x_pos"], p1["y_pos"], p1["width"], p1["height"])
-		p2rect = getRect(p2["x_pos"], p2["y_pos"], p2["width"], p2["height"])
-		ballPos = (int(game["ball"]["x_pos"]), int(game["ball"]["y_pos"]))
+		p1rect = getRect(p1[unicode("x_pos")], p1[unicode("y_pos")], p1[unicode("width")], p1[unicode("height")])
+		p2rect = getRect(p2[unicode("x_pos")], p2[unicode("y_pos")], p2[unicode("width")], p2[unicode("height")])
+		ballPos = (int(game[unicode("ball")][unicode("x_pos")]), int(game[unicode("ball")][unicode("y_pos")]))
 		
 		# draw background, players and ball
 		self.screen.fill(self.black)
 		pygame.draw.rect(self.screen, self.white, p1rect)
 		pygame.draw.rect(self.screen, self.white, p2rect)
-		pygame.draw.circle(self.screen, self.red, ballPos, int(game["ball"]["radius"]))
+		pygame.draw.circle(self.screen, self.red, ballPos, int(game[unicode("ball")][unicode("radius")]))
 		
 		# draw the score
 		myfont = pygame.font.SysFont("monospace", 42)
-		score_label = myfont.render(str(p1["score"]) + " | " + str(p2["score"]), 1, self.white)
+		score_label = myfont.render(str(p1[unicode("score")]) + " | " + str(p2[unicode("score")]), 1, self.white)
 		self.screen.blit(score_label, (260, 20))
 
 		pygame.display.flip()
