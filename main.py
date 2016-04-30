@@ -27,7 +27,11 @@ class GameSpace:
 		lc.stop()
 
 	def game_loop_iterate(self):
-		print("Game loop running")
+		# Check for collision
+		if self.ball.y_pos <= self.ball.radius or self.ball.y_pos >= self.height - self.ball.radius:
+			self.ball.hitWall()
+
+		# Update objects
 		self.player1.tick()
 		self.player2.tick()
 		self.ball.tick()
