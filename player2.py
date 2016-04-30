@@ -24,8 +24,6 @@ class ClientConnection (Protocol):
 		self.screen = pygame.display.set_mode(self.size)
 
 	def dataReceived(self, data):
-		print data.split('?')[0]
-		print ""
 		# get game data sent over
 		try:
 			game = json.loads(data.split('?')[0])
@@ -63,7 +61,7 @@ class ClientConnection (Protocol):
 			down = 1
 		else:
 			down = 0
-		self.transport.write( str(up) + "|" + str(down) )
+		self.transport.write( str(up) + "|" + str(down) + "?" )
 		
 	def connectionMade(self):
 		print "connected to game server"
