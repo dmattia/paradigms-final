@@ -27,16 +27,40 @@ class GameSpace:
 		lc.stop()
 
 	def game_loop_iterate(self):
+		####
+		# Check for exit
+		####
+		if event.type == QUIT:
+			sys.exit()
+
+		####
 		# Check for collision
+		####
 		if self.ball.y_pos <= self.ball.radius or self.ball.y_pos >= self.height - self.ball.radius:
 			self.ball.hitWall()
+		elif self.ball.x_pos - self.ball.radius <= self.player1.x_pos + (self.player1.width / 2.0):
+			# ball is close to the right side of player 1
+			print "Ball is close to player1's x value"
+			if self.ball.y_pos >= self.player1.y_pos - (self.player1.height / 2.0) \
+			   and self.ball.y_pos <= self.player1.y_pos + (self.player1.height / 2.0):
+				 self.ball.hitPlayer(self.player1.y_pos, self.player1.height)
+		elif self.ball.x_pos + self.ball.radius >= self.player2.x_pos - (self.player2.width / 2.0):
+			# ball is close to the right side of player 2
+			print "Ball is close to player2's x value"
+			if self.ball.y_pos >= self.player2.y_pos - (self.player2.height / 2.0) \
+			   and self.ball.y_pos <= self.player2.y_pos + (self.player2.height / 2.0):
+				 self.ball.hitPlayer(self.player2.y_pos, self.player2.height)
 
+		####
 		# Update objects
+		####
 		self.player1.tick()
 		self.player2.tick()
 		self.ball.tick()
 
+		####
 		# Draw objects
+		####
 		self.screen.fill(self.black)
 		pygame.draw.rect(self.screen, self.white, self.player1.getRect())
 		pygame.draw.rect(self.screen, self.white, self.player2.getRect())
