@@ -52,13 +52,11 @@ class GameSpace:
 			self.ball.hitWall()
 		elif self.ball.x_pos - self.ball.radius <= self.player1.x_pos + (self.player1.width / 2.0):
 			# ball is close to the right side of player 1
-			print "Ball is close to player1's x value"
 			if self.ball.y_pos >= self.player1.y_pos - (self.player1.height / 2.0) \
 			   and self.ball.y_pos <= self.player1.y_pos + (self.player1.height / 2.0):
 				 self.ball.hitPlayer(self.player1.y_pos, self.player1.height)
 		elif self.ball.x_pos + self.ball.radius >= self.player2.x_pos - (self.player2.width / 2.0):
 			# ball is close to the right side of player 2
-			print "Ball is close to player2's x value"
 			if self.ball.y_pos >= self.player2.y_pos - (self.player2.height / 2.0) \
 			   and self.ball.y_pos <= self.player2.y_pos + (self.player2.height / 2.0):
 				 self.ball.hitPlayer(self.player2.y_pos, self.player2.height)

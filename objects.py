@@ -8,12 +8,13 @@ class Player(pygame.sprite.Sprite):
 		self.y_pos = 240
 		self.height = 70
 		self.width = 10
+		self.score = 0
 
 	def moveUp(self):
-		self.y_pos += 2
+		self.y_pos -= 2
 		
 	def moveDown(self):
-		self.y_pos -= 2
+		self.y_pos += 2
 		
 	def tick(self):
 		pass
@@ -26,10 +27,6 @@ class Ball(pygame.sprite.Sprite):
 		self.x_pos = 320.0
 		self.y_pos = 240.0
 		self.y_speed = random.randrange(-1,1)
-
-		# for testing
-		self.y_speed = 0
-
 		xRand = random.randrange(-1,1)
 		if xRand < 0:
 			self.x_speed = -1.0
@@ -50,7 +47,7 @@ class Ball(pygame.sprite.Sprite):
 		self.y_pos += self.y_speed * self.speed_multiplier
 		
 	def getPos(self):
-		return (self.x_pos,self.y_pos)
+		return (int(self.x_pos),int(self.y_pos))
 
 if __name__ == '__main__':
 	p1 = Player(40)
