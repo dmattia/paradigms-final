@@ -1,6 +1,7 @@
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
+import json
 import pygame
 
 server = 'student00.cse.nd.edu'
@@ -22,13 +23,13 @@ class ClientConnection (Protocol):
 		self.red = 255, 0, 0
 		self.screen = pygame.display.set_mode(self.size)
 
-	def dataReceived(self, data):
-		print data.split('?')[0]
+	def lineReceived(self, data):
+		print data
 		print ""
 		# get game data sent over
-		game = yaml.safe_load(data.split('?')[0])
+		game = json.loads(data)
 		print game
-		p1 = game[unicode(players)][unicode("p1")]
+		p1 = game[unicode("players")][unicode("p1")]
 		p2 = game[unicode("players")][unicode("p2")]
 		
 		# determine areas to draw players and ball
