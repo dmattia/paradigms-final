@@ -21,38 +21,43 @@ class GameSpace:
 	def main(self):
 		pygame.init()
 		self.size = self.width, self.height = 640, 480
+		"""
 		self.black = 0, 0, 0
 		self.white = 255, 255, 255
 		self.red = 255, 0, 0
 		self.screen = pygame.display.set_mode(self.size)
+		"""
 		self.speed = 4.0
 
 		self.player1 = Player(40, self)
 		self.player2 = Player(600, self)
 		self.ball = Ball(self.speed)
 
-		lc = LoopingCall(self.game_loop_iterate)
-		lc.start(1.0/60)	
-		reactor.run()
-		lc.stop()
+		self.lc = LoopingCall(self.game_loop_iterate)
+		self.lc.start(1.0/60)	
+		#self.lc.stop()
 
 	def game_loop_iterate(self):
 		####
 		# Check for exit
 		####
+		"""
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				pygame.quit()
 				os._exit(0)
+		"""
 
 		####
 		# check current keydown
 		####
+		"""
 		keys_pressed = pygame.key.get_pressed()
 		if keys_pressed[pygame.K_UP]:
 			self.player1.moveUp()
 		if keys_pressed[pygame.K_DOWN]:
 			self.player1.moveDown()
+		"""
 
 		####
 		# Check for collision
@@ -75,6 +80,16 @@ class GameSpace:
 			else:
 				self.player1.score += 1
 				self.ball = Ball(self.speed)
+
+		global p1Server, p2Server
+		if p1Server.transport:
+			p1Server.transport.write(self.to_json())
+		else:
+			print "p1 server has no transport yet"
+		if p2Server.transport:
+			p2Server.transport.write(self.to_json())
+		else:
+			print "p2 server has no transport yet"
 
 		"""
 		####
@@ -115,7 +130,6 @@ class GameSpace:
 			},
 			"ball": self.ball.to_dict()
 		}
-		print json.dumps(gsData)
 		return json.dumps(gsData)
 
 
