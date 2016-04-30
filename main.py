@@ -30,8 +30,9 @@ class GameSpace:
 		####
 		# Check for exit
 		####
-		if event.type == QUIT:
-			sys.exit()
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				sys.exit()
 
 		####
 		# Check for collision
