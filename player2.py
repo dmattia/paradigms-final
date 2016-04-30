@@ -7,14 +7,45 @@ import pygame
 server = 'student00.cse.nd.edu'
 port = 40083
 
+def getRect(self, x_pos, y_pos, width, height):
+	return pygame.Rect(x_pos - width / 2, y_pos - height / 2, width, height)
+
 class ClientConnFactory(ClientFactory):
 	def buildProtocol(self, addr):
 		return  ClientConnection()
 
 class ClientConnection (Protocol):
+	def __init__(self):
+		pygame.init()
+		self.size = self.width, self.height = 640, 480
+		self.black = 0, 0, 0
+		self.white = 255, 255, 255
+		self.red = 255, 0, 0
+		self.screen = pygame.display.set_mode(self.size)
+
 	def dataReceived(self, data):
-		#draw game state
+		# get game data sent over
+		game = json.parse(data)
+		p1 = game.players.p1
+		p2 = game.players.p2
 		
+		# determine areas to draw players and ball
+		p1rect = getRect(p1.x_pos, p1.y_pos, p1.width, p1.height)
+		p2rect = getRect(p2.x_pos, p2.y_pos, p2.width, p2.height)
+		ballPos = (game.ball.x_pos, game.ball.y_pos)
+		
+		# draw background, players and ball
+		self.screen.fill(self.black)
+		pygame.draw.rect(self.screen, self.white, p1rect)
+		pygame.draw.rect(self.screen, self.white, p2rect)
+		pygame.draw.circle(self.screen, self.red, ballPos, game.ball.radius)
+		
+		# draw the score
+		myfont = pygame.font.SysFont("monospace", 42)
+		score_label = myfont.render(str(p1.score) + " | " + str(p2.score), 1, self.white)
+		self.screen.blit(score_label, (260, 20))
+
+		pygame.display.flip()
 		
 		#send back key presses
 		keysPressed = pygame.key.get_pressed()
@@ -26,10 +57,11 @@ class ClientConnection (Protocol):
 			down = 1
 		else:
 			down = 0
-		self.transport.write( (up,down) )
+		self.transport.write( (up, down) )
 		
 	def connectionLost(self, reason):
 		reactor.stop()
+	
 
 if __name__ == '__main__':
 	reactor.connectTCP(server, port, ClientConnFactory())
