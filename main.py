@@ -80,8 +80,8 @@ class GameSpace:
 		# Draw Score
 		####
 		myfont = pygame.font.SysFont("monospace", 42)
-		score_label = myfont.render(str(player1.score) + " | " + str(player2.score), 1, self.white)
-		screen.blit(score_label, (320, 50))
+		score_label = myfont.render(str(self.player1.score) + " | " + str(self.player2.score), 1, self.white)
+		self.screen.blit(score_label, (260, 20))
 
 		pygame.display.flip()
 
