@@ -27,7 +27,10 @@ class ClientConnection (Protocol):
 		print data.split('?')[0]
 		print ""
 		# get game data sent over
-		game = json.loads(data.split('?')[0])
+		try:
+			game = json.loads(data.split('?')[0])
+		except:
+			return
 		print game
 		p1 = game["players"]["p1"]
 		p2 = game["players"]["p2"]
