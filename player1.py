@@ -23,7 +23,7 @@ class ClientConnection (Protocol):
 		self.red = 255, 0, 0
 		self.screen = pygame.display.set_mode(self.size)
 
-	def lineReceived(self, data):
+	def dataReceived(self, data):
 		print data
 		print ""
 		# get game data sent over
