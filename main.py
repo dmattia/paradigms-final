@@ -1,5 +1,6 @@
 import sys 
 import os
+import json
 import pygame
 from pygame.locals import *
 
@@ -93,7 +94,20 @@ class GameSpace:
 		pygame.display.flip()
 
 	def to_json(self):
-		pass
+		""" Creates a dictionary @gsData that represents the gamestate.
+				Important for sending game data over our server so that a client
+				can properly display the GameState
+			  Returns: @gsData converted to json
+		"""
+		gsData = {
+			"players": {
+				"p1": self.player1.to_dict(),
+				"p2": self.player2.to_dict(),
+			},
+			"ball": self.ball.to_dict()
+		}
+		print json.dumps(gsData)
+		return json.dumps(gsData)
 
 if __name__ == '__main__':
 	gs = GameSpace()

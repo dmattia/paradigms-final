@@ -18,6 +18,16 @@ class Player(pygame.sprite.Sprite):
 	def moveDown(self):
 		if self.y_pos < self.gameState.height - self.height / 2.0:
 			self.y_pos += 4.0
+
+	def to_dict(self):
+		dict = {
+			"score": self.score,
+			"x_pos": self.x_pos,
+			"y_pos": self.y_pos,
+			"height": self.height,
+			"width": self.width
+		}
+		return dict
 		
 	def tick(self):
 		pass
@@ -37,6 +47,14 @@ class Ball(pygame.sprite.Sprite):
 			self.x_speed = 1.0
 		self.speed_multiplier = mult
 		self.radius = 5
+
+	def to_dict(self):
+		dict = {
+			"x_pos": self.x_pos,			
+			"y_pos": self.y_pos,			
+			"radius": self.radius
+		}
+		return dict
 		
 	def hitWall(self):
 		self.y_speed *= -1.0
