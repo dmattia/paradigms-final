@@ -24,10 +24,10 @@ class ClientConnection (Protocol):
 		self.screen = pygame.display.set_mode(self.size)
 
 	def dataReceived(self, data):
-		print data
+		print data.split('?')[0]
 		print ""
 		# get game data sent over
-		game = json.loads(data)
+		game = json.loads(data.split('?')[0])
 		print game
 		p1 = game["players"]["p1"]
 		p2 = game["players"]["p2"]
