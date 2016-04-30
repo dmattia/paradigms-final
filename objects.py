@@ -36,6 +36,10 @@ class Ball(pygame.sprite.Sprite):
 			self.x_speed = -1.0
 		else:
 			self.x_speed = 1.0
+
+		# remove
+		self.x_speed = 0.0
+		
 		self.speed_multiplier = mult
 		self.radius = 5
 		
