@@ -5,6 +5,7 @@ import json
 import pygame
 from pygame.locals import *
 import sys
+import time
 
 server = 'student03.cse.nd.edu'
 port = 40075
@@ -40,8 +41,8 @@ class ClientConnection (Protocol):
 			win_label = myfont.render("PLAYER 1 WON", 1, self.white)
 			myfont = pygame.font.SysFont("monospace", 24)
 			exit_label = myfont.render("press any key to exit", 1, self.white)
-			self.screen.blit(connected_label, (200, 100))
-			self.screen.blit(waiting_label, (120, 200))
+			self.screen.blit(win_label, (200, 100))
+			self.screen.blit(exit_label, (120, 200))
 			pygame.display.flip()
 			
 			# wait 2 seconds then for key to exit
@@ -55,8 +56,8 @@ class ClientConnection (Protocol):
 			win_label = myfont.render("PLAYER 2 WON", 1, self.white)
 			myfont = pygame.font.SysFont("monospace", 24)
 			exit_label = myfont.render("press any key to exit", 1, self.white)
-			self.screen.blit(connected_label, (200, 100))
-			self.screen.blit(waiting_label, (120, 200))
+			self.screen.blit(win_label, (200, 100))
+			self.screen.blit(exit_label, (120, 200))
 			pygame.display.flip()
 	
 			# wait 2 seconds then for key to exit
@@ -70,8 +71,8 @@ class ClientConnection (Protocol):
 			win_label = myfont.render("PLAYER 2 FORFEITS", 1, self.white)
 			myfont = pygame.font.SysFont("monospace", 24)
 			exit_label = myfont.render("press any key to exit", 1, self.white)
-			self.screen.blit(connected_label, (200, 100))
-			self.screen.blit(waiting_label, (120, 200))
+			self.screen.blit(win_label, (200, 100))
+			self.screen.blit(exit_label, (120, 200))
 			pygame.display.flip()
 	
 			# wait 2 seconds then for key to exit
@@ -190,8 +191,8 @@ class ClientConnection (Protocol):
 		win_label = myfont.render("GAME SERVER CONNECTION LOST", 1, self.white)
 		myfont = pygame.font.SysFont("monospace", 24)
 		exit_label = myfont.render("press any key to exit", 1, self.white)
-		self.screen.blit(connected_label, (100, 100))
-		self.screen.blit(waiting_label, (120, 200))
+		self.screen.blit(win_label, (100, 100))
+		self.screen.blit(exit_label, (120, 200))
 		pygame.display.flip()
 	
 		# wait 2 seconds then for key to exit
