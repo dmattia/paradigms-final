@@ -166,7 +166,7 @@ class P1Server(Protocol):
 		print "Connection lost to player 1"
 		global player_one_connected, player_two_connected
 		player_one_connected = False
-		if player1.score < 10 and player2.score < 10:
+		if self.player1.score < 10 and self.player2.score < 10:
 			p2Server.transport.write("p1 forfeit")
 
 class P2ServerFactory(Factory):

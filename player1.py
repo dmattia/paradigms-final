@@ -110,8 +110,8 @@ class ClientConnection (Protocol):
 			self.screen.blit(top_label, (120, 100))
 			self.screen.blit(difficulty_label, (112, 200))
 			pygame.display.flip()
-			key = self.waitForKey():
-				self.transport.write("one player:" + str(key))
+			key = self.waitForKey()
+			self.transport.write("one player:" + str(key))
 		else:
 			pass
 			
