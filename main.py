@@ -92,12 +92,12 @@ class GameSpace:
 		if self.player1.score == 3:
 			print "game"
 			p1Server.transport.write("p1 win")
-			if not self.player2.is_cpu():
+			if not self.player2.is_cpu:
 				p2Server.transport.write("p1 win")
 		elif self.player2.score == 3:
 			print "game"
 			p1Server.transport.write("p2 win")
-			if not self.player2.is_cpu():
+			if not self.player2.is_cpu:
 				p2Server.transport.write("p2 win")
 
 		####
