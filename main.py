@@ -96,8 +96,11 @@ class P1Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
-		upPressed = data.split("?")[0].split("|")[0]
-		downPressed = data.split("?")[0].split("|")[1]
+		try:
+			upPressed = data.split("?")[0].split("|")[0]
+			downPressed = data.split("?")[0].split("|")[1]
+		except IndexError, e:
+			return
 		if int(upPressed) and not gs.player1.is_cpu:
 			gs.player1.moveUp()
 		if int(downPressed) and not gs.player1.is_cpu:
@@ -128,8 +131,11 @@ class P2Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
-		upPressed = data.split("?")[0].split("|")[0]
-		downPressed = data.split("?")[0].split("|")[1]
+		try:
+			upPressed = data.split("?")[0].split("|")[0]
+			downPressed = data.split("?")[0].split("|")[1]
+		except IndexError, e:
+			return
 		if int(upPressed) and not gs.player2.is_cpu:
 			gs.player2.moveUp()
 		if int(downPressed) and not gs.player2.is_cpu:
