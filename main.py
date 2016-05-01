@@ -41,9 +41,9 @@ class GameSpace:
 			self.player2 = Player(600, self, False)
 
 		if self.player1.is_cpu:
-			self.player1.cpu_movementAmount = self.player1.movementAmount * cpu_difficulty / 7.0
+			self.player1.cpu_movementAmount = self.player1.movementAmount * int(cpu_difficulty) / 7.0
 		if self.player2.is_cpu:
-			self.player2.cpu_movementAmount = self.player2.movementAmount * cpu_difficulty / 7.0
+			self.player2.cpu_movementAmount = self.player2.movementAmount * int(cpu_difficulty) / 7.0
 
 		self.ball = Ball(self.speed)
 
@@ -135,15 +135,14 @@ class P1Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
+		global gs
+		global player_one_connected, player_two_connected
 		if "one player:" in data:
-			global gs
 			gs = GameSpace(2, data.split(":")[-1])
 		elif data == "two players":
-			global player_one_connected, player_two_connected
 			player_one_connected = True
 			if player_two_connected:
 				print "Both players connected"
-				global gs
 				gs = GameSpace(0)
 		else:
 			try:
@@ -166,8 +165,10 @@ class P1Server(Protocol):
 		print "Connection lost to player 1"
 		global player_one_connected, player_two_connected
 		player_one_connected = False
-		if gs.player1.score < 10 and gs.player2.score < 10:
+		if gs is not None and gs.player1.score < 10 and gs.player2.score < 10:
 			p2Server.transport.write("p1 forfeit")
+		elif gs is None:
+			print "Fuck"
 
 class P2ServerFactory(Factory):
 	def buildProtocol(self, addr):
@@ -180,15 +181,14 @@ class P2Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
+		global gs
+		global player_one_connected, player_two_connected
 		if "one player:" in data:
-			global gs
 			gs = GameSpace(2, data.split(":")[-1])
 		elif data == "two players":
-			global player_one_connected, player_two_connected
 			player_two_connected = True
 			if player_one_connected:
 				print "Both players connected"
-				global gs
 				gs = GameSpace()
 		else:
 			try:
