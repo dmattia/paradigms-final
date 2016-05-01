@@ -22,7 +22,7 @@ gs = None
 # cpu_player 1 means player 1 is a cpu
 # cpu_player 2 means player 2 is a cpu
 class GameSpace:
-	def __init__(self, cpu_player):
+	def __init__(self, cpu_player=0, cpu_difficulty=0):
 		self.size = self.width, self.height = 640, 480
 		self.speed = 12.0
 
@@ -39,6 +39,11 @@ class GameSpace:
 		else:
 			self.player1 = Player(40, self, False)
 			self.player2 = Player(600, self, False)
+
+		if self.player1.is_cpu:
+			self.player1.cpu_movementAmount = self.player1.movementAmount * cpu_difficulty / 7.0
+		if self.player2.is_cpu:
+			self.player2.cpu_movementAmount = self.player2.movementAmount * cpu_difficulty / 7.0
 
 		self.ball = Ball(self.speed)
 
@@ -130,9 +135,9 @@ class P1Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
-		if data == "one player":
+		if "one player:" in data:
 			global gs
-			gs = GameSpace(2)
+			gs = GameSpace(2, data.split(":")[-1])
 		elif data == "two players":
 			global player_one_connected, player_two_connected
 			player_one_connected = True
@@ -175,9 +180,9 @@ class P2Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
-		if data == "one player":
+		if "one player:" in data:
 			global gs
-			gs = GameSpace(1)
+			gs = GameSpace(2, data.split(":")[-1])
 		elif data == "two players":
 			global player_one_connected, player_two_connected
 			player_two_connected = True

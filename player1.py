@@ -103,7 +103,15 @@ class ClientConnection (Protocol):
 			self.screen.blit(waiting_label, (112, 200))
 			pygame.display.flip()
 		elif key == 1:
-			self.transport.write("one player")
+			self.screen.fill(self.black)
+			myfont = pygame.font.SysFont("monospace", 32)
+			top_label = myfont.render("SELECT DIFFICULTY", 1, self.white)
+			difficulty_label = myfont.render("0 1 2 3 4 5 6 7 8 9", 1, self.white)
+			self.screen.blit(top_label, (120, 100))
+			self.screen.blit(difficulty_label, (112, 200))
+			pygame.display.flip()
+			key = self.waitForKey():
+				self.transport.write("one player:" + str(key))
 		else:
 			pass
 			
@@ -113,10 +121,26 @@ class ClientConnection (Protocol):
 				if event.type == QUIT:
 					pygame.quit()
 					reactor.stop()
+				if event.type == KEYDOWN and event.key == K_0:
+					return 0
 				if event.type == KEYDOWN and event.key == K_1:
 					return 1
 				if event.type == KEYDOWN and event.key == K_2:
 					return 2
+				if event.type == KEYDOWN and event.key == K_3:
+					return 3
+				if event.type == KEYDOWN and event.key == K_4:
+					return 4
+				if event.type == KEYDOWN and event.key == K_5:
+					return 5
+				if event.type == KEYDOWN and event.key == K_6:
+					return 6
+				if event.type == KEYDOWN and event.key == K_7:
+					return 7
+				if event.type == KEYDOWN and event.key == K_8:
+					return 8
+				if event.type == KEYDOWN and event.key == K_9:
+					return 9
 		
 	def connectionLost(self, reason):
 		reactor.stop()
