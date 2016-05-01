@@ -13,22 +13,22 @@ PLAYER_ONE_PORT = 40075
 PLAYER_TWO_PORT = 40083
 
 player_one_connected = False
-player_two_connected = False
+player_two_connected = True
 p1Server = None
 p2Server = None
 gs = None
 
 class GameSpace:
-	def main(self):
+	def __init__(self):
 		self.size = self.width, self.height = 640, 480
-		self.speed = 4.0
+		self.speed = 12.0
 
-		self.player1 = Player(40, self)
-		self.player2 = Player(600, self)
+		self.player1 = Player(40, self, False)
+		self.player2 = Player(600, self, True)
 		self.ball = Ball(self.speed)
 
 		self.lc = LoopingCall(self.game_loop_iterate)
-		self.lc.start(1.0/60)	
+		self.lc.start(1.0/30)	
 
 	def game_loop_iterate(self):
 		####
@@ -56,13 +56,15 @@ class GameSpace:
 		####
 		# Update objects
 		####
-		self.player1.tick()
-		self.player2.tick()
+		self.player1.tick(self.ball.y_pos)
+		self.player2.tick(self.ball.y_pos)
 		self.ball.tick()
 
 		global p1Server, p2Server
-		p1Server.transport.write(self.to_json() + "?")
-		p2Server.transport.write(self.to_json() + "?")
+		if not self.player1.is_cpu:
+			p1Server.transport.write(self.to_json() + "?")
+		if not self.player2.is_cpu:
+			p2Server.transport.write(self.to_json() + "?")
 
 	def to_json(self):
 		""" Creates a dictionary @gsData that represents the gamestate.
@@ -93,11 +95,9 @@ class P1Server(Protocol):
 	def dataReceived(self, data):
 		upPressed = data.split("?")[0].split("|")[0]
 		downPressed = data.split("?")[0].split("|")[1]
-		if int(upPressed):
-			print "Player 1 should be moving up"
+		if int(upPressed) and not gs.player1.is_cpu:
 			gs.player1.moveUp()
-		if int(downPressed):
-			print "Player 1 should be moving down"
+		if int(downPressed) and not gs.player1.is_cpu:
 			gs.player1.moveDown()
 
 	def connectionMade(self):
@@ -108,7 +108,6 @@ class P1Server(Protocol):
 			print "Both players connected"
 			global gs
 			gs = GameSpace()
-			gs.main()
 
 	def connectionLost(self, reason):
 		print "Connection lost to player 1"
@@ -128,9 +127,9 @@ class P2Server(Protocol):
 	def dataReceived(self, data):
 		upPressed = data.split("?")[0].split("|")[0]
 		downPressed = data.split("?")[0].split("|")[1]
-		if int(upPressed):
+		if int(upPressed) and not gs.player2.is_cpu:
 			gs.player2.moveUp()
-		if int(downPressed):
+		if int(downPressed) and not gs.player2.is_cpu:
 			gs.player2.moveDown()
 
 	def connectionMade(self):
@@ -141,7 +140,6 @@ class P2Server(Protocol):
 			print "Both players connected"
 			global gs
 			gs = GameSpace()
-			gs.main()
 
 	def connectionLost(self, reason):
 		print "Connection lost to player 2"
