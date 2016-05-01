@@ -7,6 +7,7 @@ from pygame.locals import *
 import sys
 
 server = 'student01.cse.nd.edu'
+port = 40083
 
 def getRect(x_pos, y_pos, width, height):
 	return pygame.Rect(x_pos - width / 2, y_pos - height / 2, width, height)
@@ -30,8 +31,11 @@ class ClientConnection (Protocol):
 		self.white = 255, 255, 255
 		self.red = 255, 0, 0
 		self.screen = pygame.display.set_mode(self.size)
+		self.count = 0
 
 	def dataReceived(self, data):
+		self.count += 1
+		print self.count
 		# get game data sent over
 		json_data = data.split('?', 1)[0]
 		if is_json(json_data):
@@ -82,5 +86,5 @@ class ClientConnection (Protocol):
 		reactor.stop()
 	
 if __name__ == '__main__':
-	reactor.connectTCP(server, int(sys.argv[1]), ClientConnFactory())
+	reactor.connectTCP(server, port, ClientConnFactory())
 	reactor.run()
