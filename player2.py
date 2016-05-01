@@ -69,7 +69,7 @@ class ClientConnection (Protocol):
 			time.sleep(2)
 			self.exitWait()
 			
-		# player 1 won- display finish screen
+		# player 1 forfeit- display finish screen
 		elif data == 'p1 forfeit':
 			self.screen.fill(self.black)
 			myfont = pygame.font.SysFont("monospace", 32)
