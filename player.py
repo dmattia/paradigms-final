@@ -3,10 +3,10 @@ from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
 import json
 import pygame
+from pygame.locals import *
 import sys
 
 server = 'student01.cse.nd.edu'
-port = 40075
 
 def getRect(x_pos, y_pos, width, height):
 	return pygame.Rect(x_pos - width / 2, y_pos - height / 2, width, height)
@@ -62,6 +62,12 @@ class ClientConnection (Protocol):
 
 		pygame.display.flip()
 		
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				print "Quit event found"
+				#pygame.quit()
+		        #self.transport.loseConnection()
+
 		#send back key presses
 		keysPressed = pygame.key.get_pressed()
 		up = keysPressed[pygame.K_UP]
