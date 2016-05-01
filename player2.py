@@ -6,23 +6,28 @@ import pygame
 from pygame.locals import *
 import sys
 
-server = 'student01.cse.nd.edu'
+# game server and player 2 port
+server = 'student03.cse.nd.edu'
 port = 40083
 
+# returns the pygame rectangle of a player given its parameters
 def getRect(x_pos, y_pos, width, height):
 	return pygame.Rect(x_pos - width / 2, y_pos - height / 2, width, height)
 
-class ClientConnFactory(ClientFactory):
-	def buildProtocol(self, addr):
-		return  ClientConnection()
-
+# checks whether a piece of data is valid json
 def is_json(data):
 	try:
 		json.loads(data)
 		return True
 	except ValueError, e:
 		return False
+	
+# player 2's connection factory
+class ClientConnFactory(ClientFactory):
+	def buildProtocol(self, addr):
+		return  ClientConnection()
 
+# player 2's connection to the game server
 class ClientConnection (Protocol):
 	def __init__(self):
 		pygame.init()
@@ -31,19 +36,16 @@ class ClientConnection (Protocol):
 		self.white = 255, 255, 255
 		self.red = 255, 0, 0
 		self.screen = pygame.display.set_mode(self.size)
-		self.count = 0
 
 	def dataReceived(self, data):
-		self.count += 1
-		print self.count
-		# get game data sent over
+		# process the game data sent over
 		json_data = data.split('?', 1)[0]
 		if is_json(json_data):
 			game = json.loads(json_data)
+		# This can happen when the transport stream is fragmented and the
+		# end of one json string is sent over that is incomplete
+		# This is uncommon, and can be ignored
 		else:
-			# This can happen when the transport stream is fragmented and the
-			# end of one json string is sent over that is incomplete
-			# This is uncommon, and can be ignored
 			return
 		p1 = game["players"]["p1"]
 		p2 = game["players"]["p2"]
@@ -64,24 +66,26 @@ class ClientConnection (Protocol):
 		score_label = myfont.render(str(p1["score"]) + " | " + str(p2["score"]), 1, self.white)
 		self.screen.blit(score_label, (260, 20))
 
+		# now, actually display everything
 		pygame.display.flip()
 		
+		#check for X button pressed
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				print "Quit event found"
 				#pygame.quit()
 		        #self.transport.loseConnection()
 
-		#send back key presses
+		#send back key presses for player movement
 		keysPressed = pygame.key.get_pressed()
 		up = keysPressed[pygame.K_UP]
 		down = keysPressed[pygame.K_DOWN]
-		#print str(up) + "|" + str(down)
 		self.transport.write( str(up) + "|" + str(down) + "?" )
-		
+
+	# connection established to the game server
 	def connectionMade(self):
 		print "connected to game server"
-		# draw waiting screen
+		# draw waiting for player 1 screen
 		self.screen.fill(self.black)
 		myfont = pygame.font.SysFont("monospace", 32)
 		connected_label = myfont.render("CONNECTED TO SERVER", 1, self.white)
@@ -89,10 +93,12 @@ class ClientConnection (Protocol):
 		self.screen.blit(connected_label, (120, 100))
 		self.screen.blit(waiting_label, (112, 200))
 		pygame.display.flip()
-		
+
+	# game server severed connection
 	def connectionLost(self, reason):
 		reactor.stop()
-	
+
+# try to connect to game server
 if __name__ == '__main__':
 	reactor.connectTCP(server, port, ClientConnFactory())
 	reactor.run()
