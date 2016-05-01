@@ -92,7 +92,7 @@ class ClientConnection (Protocol):
 		self.screen.blit(select_label, (60, 250))
 		self.screen.blit(oneOrTwo_label, (250, 300))
 		pygame.display.flip()
-		key = waitForKey()
+		key = self.waitForKey()
 		if key == 2:
 			self.transport.write("two players")
 			self.screen.fill(self.black)

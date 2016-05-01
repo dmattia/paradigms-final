@@ -13,7 +13,7 @@ PLAYER_ONE_PORT = 40075
 PLAYER_TWO_PORT = 40083
 
 player_one_connected = False
-player_two_connected = True
+player_two_connected = False
 p1Server = None
 p2Server = None
 gs = None
@@ -24,7 +24,7 @@ class GameSpace:
 		self.speed = 12.0
 
 		self.player1 = Player(40, self, False)
-		self.player2 = Player(600, self, True)
+		self.player2 = Player(600, self, False)
 		self.ball = Ball(self.speed)
 
 		self.lc = LoopingCall(self.game_loop_iterate)
@@ -35,6 +35,7 @@ class GameSpace:
 		# Check for collision
 		####
 		if self.ball.y_pos <= self.ball.radius or self.ball.y_pos >= self.height - self.ball.radius:
+			# ball is close to top or bottom
 			self.ball.hitWall()
 		elif self.ball.x_pos - self.ball.radius <= self.player1.x_pos + (self.player1.width / 2.0):
 			# ball is close to the left side
@@ -48,8 +49,10 @@ class GameSpace:
 			# ball is close to the right side
 			if self.ball.y_pos >= self.player2.y_pos - (self.player2.height / 2.0) \
 			   and self.ball.y_pos <= self.player2.y_pos + (self.player2.height / 2.0):
+				 # Ball is close to player 2
 				 self.ball.hitPlayer(self.player2.y_pos, self.player2.height)
 			else:
+				 # Ball is not close to player 2
 				self.player1.score += 1
 				self.ball = Ball(self.speed)
 
