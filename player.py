@@ -3,8 +3,9 @@ from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
 import json
 import pygame
+import sys
 
-server = 'student00.cse.nd.edu'
+server = 'student01.cse.nd.edu'
 port = 40075
 
 def getRect(x_pos, y_pos, width, height):
@@ -65,5 +66,5 @@ class ClientConnection (Protocol):
 	
 
 if __name__ == '__main__':
-	reactor.connectTCP(server, port, ClientConnFactory())
+	reactor.connectTCP(server, int(sys.argv[1]), ClientConnFactory())
 	reactor.run()
