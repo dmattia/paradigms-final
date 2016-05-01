@@ -25,10 +25,10 @@ class Player(pygame.sprite.Sprite):
 			self.y_pos += toMove
 
 	def getTop(self):
-		return y_pos + height / 2.0
+		return self.y_pos + self.height / 2.0
 
 	def getBottom(self):
-		return y_pos - height / 2.0
+		return self.y_pos - self.height / 2.0
 
 	def to_dict(self):
 		dict = {
