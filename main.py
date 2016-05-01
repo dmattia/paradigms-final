@@ -83,6 +83,13 @@ class GameSpace:
 			self.player1.score += 1
 			self.ball = Ball(self.speed)
 
+		if self.player1.score == 10:
+			p1Server.transport.write("p1 win")
+			p2Server.transport.write("p1 win")
+		elif self.player2.score == 10:
+			p1Server.transport.write("p2 win")
+			p2Server.transport.write("p2 win")
+
 		####
 		# Update objects
 		####
@@ -154,6 +161,8 @@ class P1Server(Protocol):
 		print "Connection lost to player 1"
 		global player_one_connected, player_two_connected
 		player_one_connected = False
+		if player1.score < 10 and player2.score < 10:
+			p2Server.transport.write("p1 forfeit")
 
 class P2ServerFactory(Factory):
 	def buildProtocol(self, addr):
@@ -200,6 +209,8 @@ class P2Server(Protocol):
 		print "Connection lost to player 2"
 		global player_one_connected, player_two_connected
 		player_two_connected = False
+		if player1.score < 10 and player2.score < 10:
+			p1Server.transport.write("p2 forfeit")
 
 
 if __name__ == '__main__':
