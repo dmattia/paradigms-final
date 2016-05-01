@@ -31,11 +31,53 @@ class ClientConnection (Protocol):
 		self.white = 255, 255, 255
 		self.red = 255, 0, 0
 		self.screen = pygame.display.set_mode(self.size)
-		self.count = 0
 
 	def dataReceived(self, data):
-		self.count += 1
-		print self.count
+		# player 1 won- display finish screen
+		if data == 'p1 win':
+			self.screen.fill(self.black)
+			myfont = pygame.font.SysFont("monospace", 32)
+			win_label = myfont.render("PLAYER 1 WON", 1, self.white)
+			myfont = pygame.font.SysFont("monospace", 24)
+			exit_label = myfont.render("press any key to exit", 1, self.white)
+			self.screen.blit(connected_label, (200, 100))
+			self.screen.blit(waiting_label, (120, 200))
+			pygame.display.flip()
+			
+			# wait 2 seconds then for key to exit
+			time.sleep(2)
+			self.exitWait()
+		
+		# player 1 won- display finish screen
+		elif data == 'p2 win':
+			self.screen.fill(self.black)
+			myfont = pygame.font.SysFont("monospace", 32)
+			win_label = myfont.render("PLAYER 2 WON", 1, self.white)
+			myfont = pygame.font.SysFont("monospace", 24)
+			exit_label = myfont.render("press any key to exit", 1, self.white)
+			self.screen.blit(connected_label, (200, 100))
+			self.screen.blit(waiting_label, (120, 200))
+			pygame.display.flip()
+	
+			# wait 2 seconds then for key to exit
+			time.sleep(2)
+			self.exitWait()
+			
+		# player 2 forfeit
+		elif data == 'p2 forfeit':
+			self.screen.fill(self.black)
+			myfont = pygame.font.SysFont("monospace", 32)
+			win_label = myfont.render("PLAYER 2 FORFEITS", 1, self.white)
+			myfont = pygame.font.SysFont("monospace", 24)
+			exit_label = myfont.render("press any key to exit", 1, self.white)
+			self.screen.blit(connected_label, (200, 100))
+			self.screen.blit(waiting_label, (120, 200))
+			pygame.display.flip()
+	
+			# wait 2 seconds then for key to exit
+			time.sleep(2)
+			self.exitWait()
+		
 		# get game data sent over
 		json_data = data.split('?', 1)[0]
 		if is_json(json_data):
@@ -143,7 +185,32 @@ class ClientConnection (Protocol):
 					return 9
 		
 	def connectionLost(self, reason):
-		reactor.stop()
+		self.screen.fill(self.black)
+		myfont = pygame.font.SysFont("monospace", 32)
+		win_label = myfont.render("GAME SERVER CONNECTION LOST", 1, self.white)
+		myfont = pygame.font.SysFont("monospace", 24)
+		exit_label = myfont.render("press any key to exit", 1, self.white)
+		self.screen.blit(connected_label, (100, 100))
+		self.screen.blit(waiting_label, (120, 200))
+		pygame.display.flip()
+	
+		# wait 2 seconds then for key to exit
+		time.sleep(2)
+		while True:
+			for event in pygame.event.get():
+				if event.type == QUIT or event.type == KEYDOWN:
+					pygame.quit()
+					reactor.stop()
+					return
+		
+	def exitWait(self):
+		while True:
+			for event in pygame.event.get():
+				if event.type == QUIT or event.type == KEYDOWN:
+					self.transport.loseConnection()
+					pygame.quit()
+					reactor.stop()
+					return
 	
 if __name__ == '__main__':
 	reactor.connectTCP(server, port, ClientConnFactory())
