@@ -20,7 +20,6 @@ gs = None
 
 class GameSpace:
 	def main(self):
-		pygame.init()
 		self.size = self.width, self.height = 640, 480
 		self.speed = 4.0
 
@@ -94,8 +93,12 @@ class P1Server(Protocol):
 	def dataReceived(self, data):
 		upPressed = data.split("?")[0].split("|")[0]
 		downPressed = data.split("?")[0].split("|")[1]
-		print "Up: " + str(upPressed)
-		print "Down: " + str(downPressed)
+		if int(upPressed):
+			print "Player 1 should be moving up"
+			gs.player1.moveUp()
+		if int(downPressed):
+			print "Player 1 should be moving down"
+			gs.player1.moveDown()
 
 	def connectionMade(self):
 		print "Player 1 connected"
@@ -123,7 +126,12 @@ class P2Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
-		pass
+		upPressed = data.split("?")[0].split("|")[0]
+		downPressed = data.split("?")[0].split("|")[1]
+		if int(upPressed):
+			gs.player2.moveUp()
+		if int(downPressed):
+			gs.player2.moveDown()
 
 	def connectionMade(self):
 		print "Player 2 connected"
