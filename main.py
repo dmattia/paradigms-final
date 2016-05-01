@@ -132,17 +132,20 @@ class P1Server(Protocol):
 			if player_two_connected:
 				print "Both players connected"
 				global gs
-				gs = GameSpace()
+				gs = GameSpace(0)
 		else:
 			try:
 				upPressed = data.split("?")[0].split("|")[0]
 				downPressed = data.split("?")[0].split("|")[1]
 			except IndexError, e:
 				return
-			if int(upPressed) and not gs.player1.is_cpu:
-				gs.player1.moveUp()
-			if int(downPressed) and not gs.player1.is_cpu:
-				gs.player1.moveDown()
+			try:
+				if int(upPressed) and not gs.player1.is_cpu:
+					gs.player1.moveUp()
+				if int(downPressed) and not gs.player1.is_cpu:
+					gs.player1.moveDown()
+			except ValueError, e:
+				return
 
 	def connectionMade(self):
 		print "Player 1 connected"
