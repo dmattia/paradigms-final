@@ -16,6 +16,7 @@ player_one_connected = False
 player_two_connected = False
 p1Server = None
 p2Server = None
+gs = None
 
 class GameSpace:
 	def main(self):
@@ -91,7 +92,10 @@ class P1Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
-		pass
+		upPressed = data.split("?")[0].split("|")[0]
+		downPressed = data.split("?")[0].split("|")[1]
+		print "Up: " + str(upPressed)
+		print "Down: " + str(downPressed)
 
 	def connectionMade(self):
 		print "Player 1 connected"
@@ -99,6 +103,7 @@ class P1Server(Protocol):
 		player_one_connected = True
 		if player_two_connected:
 			print "Both players connected"
+			global gs
 			gs = GameSpace()
 			gs.main()
 
@@ -126,6 +131,7 @@ class P2Server(Protocol):
 		player_two_connected = True
 		if player_one_connected:
 			print "Both players connected"
+			global gs
 			gs = GameSpace()
 			gs.main()
 
