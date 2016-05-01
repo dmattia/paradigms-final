@@ -163,26 +163,26 @@ class P2Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
-	if data == "one player":
-            global gs
-            gs = GameSpace(1)
-        elif data == "two players":
-            global player_one_connected, player_two_connected
-            player_two_connected = True
-            if player_one_connected:
-                print "Both players connected"
-                global gs
-                gs = GameSpace()
-        else:
-            try:
-                upPressed = data.split("?")[0].split("|")[0]
-                downPressed = data.split("?")[0].split("|")[1]
-            except IndexError, e:
-                return
-            if int(upPressed) and not gs.player2.is_cpu:
-                gs.player2.moveUp()
-            if int(downPressed) and not gs.player2.is_cpu:
-                gs.player2.moveDown()
+		if data == "one player":
+			global gs
+			gs = GameSpace(1)
+		elif data == "two players":
+			global player_one_connected, player_two_connected
+			player_two_connected = True
+			if player_one_connected:
+				print "Both players connected"
+				global gs
+				gs = GameSpace()
+		else:
+			try:
+				upPressed = data.split("?")[0].split("|")[0]
+				downPressed = data.split("?")[0].split("|")[1]
+			except IndexError, e:
+				return
+			if int(upPressed) and not gs.player2.is_cpu:
+				gs.player2.moveUp()
+			if int(downPressed) and not gs.player2.is_cpu:
+				gs.player2.moveDown()
 
 	def connectionMade(self):
 		print "Player 2 connected"
