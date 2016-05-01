@@ -18,13 +18,28 @@ p1Server = None
 p2Server = None
 gs = None
 
+# cpu_player 0 means both are human
+# cpu_player 1 means player 1 is a cpu
+# cpu_player 2 means player 2 is a cpu
 class GameSpace:
-	def __init__(self):
+	def __init__(self, cpu_player):
 		self.size = self.width, self.height = 640, 480
 		self.speed = 12.0
 
-		self.player1 = Player(40, self, False)
-		self.player2 = Player(600, self, False)
+		if cpu_player == 1:
+			global player_one_connected
+			player_one_connected = True
+			self.player1 = Player(40, self, True)
+			self.player2 = Player(600, self, False)
+		elif cpu_player == 2:
+			global player_two_connected
+			player_two_connected = True
+			self.player1 = Player(40, self, False)
+			self.player2 = Player(600, self, True)
+		else:
+			self.player1 = Player(40, self, False)
+			self.player2 = Player(600, self, False)
+
 		self.ball = Ball(self.speed)
 
 		self.lc = LoopingCall(self.game_loop_iterate)
@@ -108,15 +123,19 @@ class P1Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
-		try:
-			upPressed = data.split("?")[0].split("|")[0]
-			downPressed = data.split("?")[0].split("|")[1]
-		except IndexError, e:
-			return
-		if int(upPressed) and not gs.player1.is_cpu:
-			gs.player1.moveUp()
-		if int(downPressed) and not gs.player1.is_cpu:
-			gs.player1.moveDown()
+		if data == "one player":
+			global gs
+			gs = GameSpace(2)
+		else:
+			try:
+				upPressed = data.split("?")[0].split("|")[0]
+				downPressed = data.split("?")[0].split("|")[1]
+			except IndexError, e:
+				return
+			if int(upPressed) and not gs.player1.is_cpu:
+				gs.player1.moveUp()
+			if int(downPressed) and not gs.player1.is_cpu:
+				gs.player1.moveDown()
 
 	def connectionMade(self):
 		print "Player 1 connected"
