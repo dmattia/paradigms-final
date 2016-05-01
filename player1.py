@@ -7,7 +7,7 @@ from pygame.locals import *
 import sys
 
 server = 'student01.cse.nd.edu'
-port = 40083
+port = 40075
 
 def getRect(x_pos, y_pos, width, height):
 	return pygame.Rect(x_pos - width / 2, y_pos - height / 2, width, height)
@@ -81,6 +81,32 @@ class ClientConnection (Protocol):
 		
 	def connectionMade(self):
 		print "connected to game server"
+		# draw menu
+		self.screen.fill(self.black)
+		myfont = pygame.font.SysFont("monospace", 72)
+		title_label = myfont.render("Pong", 1, self.white)
+		myfont = pygame.font.SysFont("monospace", 32)
+		select_label = myfont.render("Select a number of players:", 1, self.white)
+		oneOrTwo_label = myfont.render("1 or 2", 1, self.white)
+		self.screen.blit(title_label, (220, 100))
+		self.screen.blit(select_label, (60, 250))
+		self.screen.blit(oneOrTwo_label, (250, 300))
+		pygame.display.flip()
+		one = two = 0
+		while not one and not two:
+			one = pygame.key.get_pressed()[K_1]
+			two = pygame.key.get_pressed()[K_2]
+		if two:
+			self.transport.write("two players")
+			self.screen.fill(self.black)
+			myfont = pygame.font.SysFont("monospace", 32)
+			connected_label = myfont.render("CONNECTED TO SERVER", 1, self.white)
+			waiting_label = myfont.render("WAITING FOR PLAYER 2", 1, self.white)
+			self.screen.blit(connected_label, (120, 100))
+			self.screen.blit(waiting_label, (112, 200))
+			pygame.display.flip()
+		else:
+			pass
 		
 	def connectionLost(self, reason):
 		reactor.stop()

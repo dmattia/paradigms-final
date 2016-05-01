@@ -81,6 +81,14 @@ class ClientConnection (Protocol):
 		
 	def connectionMade(self):
 		print "connected to game server"
+		# draw waiting screen
+		self.screen.fill(self.black)
+		myfont = pygame.font.SysFont("monospace", 32)
+		connected_label = myfont.render("CONNECTED TO SERVER", 1, self.white)
+		waiting_label = myfont.render("WAITING FOR PLAYER 1", 1, self.white)
+		self.screen.blit(connected_label, (120, 100))
+		self.screen.blit(waiting_label, (112, 200))
+		pygame.display.flip()
 		
 	def connectionLost(self, reason):
 		reactor.stop()
