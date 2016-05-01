@@ -163,7 +163,7 @@ class P2Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
-        if data == "one player":
+	if data == "one player":
             global gs
             gs = GameSpace(1)
         elif data == "two players":
