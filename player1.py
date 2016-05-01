@@ -92,11 +92,8 @@ class ClientConnection (Protocol):
 		self.screen.blit(select_label, (60, 250))
 		self.screen.blit(oneOrTwo_label, (250, 300))
 		pygame.display.flip()
-		one = two = 0
-		while not one and not two:
-			one = pygame.key.get_pressed()[K_1]
-			two = pygame.key.get_pressed()[K_2]
-		if two:
+		key = waitForKey()
+		if key == 2:
 			self.transport.write("two players")
 			self.screen.fill(self.black)
 			myfont = pygame.font.SysFont("monospace", 32)
@@ -107,6 +104,17 @@ class ClientConnection (Protocol):
 			pygame.display.flip()
 		else:
 			pass
+			
+	def waitForKey(self):
+		while True:
+			for event in pygame.event.get():
+				if event.type == QUIT:
+					pygame.quit()
+					reactor.stop()
+				if event.type == KEYDOWN and event.key == K_1:
+					return 1
+				if event.type == KEYDOWN and event.key == K_2:
+					return 2
 		
 	def connectionLost(self, reason):
 		reactor.stop()
