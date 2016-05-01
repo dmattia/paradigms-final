@@ -108,6 +108,14 @@ class P1Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
+		if data == "two players":
+			global player_one_connected, player_two_connected
+			player_one_connected = True
+			if player_two_connected:
+				print "Both players connected"
+				global gs
+				gs = GameSpace()
+			return
 		try:
 			upPressed = data.split("?")[0].split("|")[0]
 			downPressed = data.split("?")[0].split("|")[1]
@@ -120,12 +128,6 @@ class P1Server(Protocol):
 
 	def connectionMade(self):
 		print "Player 1 connected"
-		global player_one_connected, player_two_connected
-		player_one_connected = True
-		if player_two_connected:
-			print "Both players connected"
-			global gs
-			gs = GameSpace()
 
 	def connectionLost(self, reason):
 		print "Connection lost to player 1"
