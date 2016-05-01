@@ -72,6 +72,7 @@ class GameSpace:
 			and self.ball.y_pos <= self.player2.getTop()
 
 	def game_loop_iterate(self):
+		global p1Server, p2Server
 		####
 		# Check for collision
 		####
@@ -88,12 +89,16 @@ class GameSpace:
 			self.player1.score += 1
 			self.ball = Ball(self.speed)
 
-		if self.player1.score == 10:
+		if self.player1.score == 3:
+			print "game"
 			p1Server.transport.write("p1 win")
-			p2Server.transport.write("p1 win")
-		elif self.player2.score == 10:
+			if not self.player2.is_cpu():
+				p2Server.transport.write("p1 win")
+		elif self.player2.score == 3:
+			print "game"
 			p1Server.transport.write("p2 win")
-			p2Server.transport.write("p2 win")
+			if not self.player2.is_cpu():
+				p2Server.transport.write("p2 win")
 
 		####
 		# Update objects
@@ -164,6 +169,7 @@ class P1Server(Protocol):
 	def connectionLost(self, reason):
 		print "Connection lost to player 1"
 		global player_one_connected, player_two_connected
+		global p2Server
 		player_one_connected = False
 		if gs is not None and gs.player1.score < 10 and gs.player2.score < 10:
 			p2Server.transport.write("p1 forfeit")
