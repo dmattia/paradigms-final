@@ -24,6 +24,12 @@ class Player(pygame.sprite.Sprite):
 		if self.y_pos < self.gameState.height - self.height / 2.0:
 			self.y_pos += toMove
 
+	def getTop(self):
+		return y_pos + height / 2.0
+
+	def getBottom(self):
+		return y_pos - height / 2.0
+
 	def to_dict(self):
 		dict = {
 			"score": self.score,

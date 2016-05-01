@@ -30,31 +30,43 @@ class GameSpace:
 		self.lc = LoopingCall(self.game_loop_iterate)
 		self.lc.start(1.0/30)	
 
+	def ballIsToTheWall(self):
+		""" Determines if the ball's y_pos is close to a wall
+		"""
+		return self.ball.y_pos <= self.ball.radius or self.ball.y_pos >= self.height - self.ball.radius
+
+	def ballIsCloseToPlayer1(self):
+		""" Determines if the ball's position is being hit by player 1
+		"""
+		return self.ball.x_pos - self.ball.radius <= self.player1.x_pos + (self.player1.width / 2.0) \
+			and self.ball.x_pos - self.ball.radius >= self.player1.x_pos - (self.player1.width / 2.0) \
+			and self.ball.y_pos >= self.player1.getBottom() \
+			and self.ball.y_pos <= self.player1.getTop()
+
+	def ballIsCloseToPlayer2(self):
+		""" Determines if the ball's position is being hit by player 2
+		"""
+		return self.ball.x_pos + self.ball.radius <= self.player2.x_pos + (self.player2.width / 2.0) \
+			and self.ball.x_pos + self.ball.radius >= self.player2.x_pos - (self.player2.width / 2.0) \
+			and self.ball.y_pos >= self.player2.getBottom() \
+			and self.ball.y_pos <= self.player2.getTop()
+
 	def game_loop_iterate(self):
 		####
 		# Check for collision
 		####
-		if self.ball.y_pos <= self.ball.radius or self.ball.y_pos >= self.height - self.ball.radius:
-			# ball is close to top or bottom
+		if self.ballIsToTheWall():
 			self.ball.hitWall()
-		elif self.ball.x_pos - self.ball.radius <= self.player1.x_pos + (self.player1.width / 2.0):
-			# ball is close to the left side
-			if self.ball.y_pos >= self.player1.y_pos - (self.player1.height / 2.0) \
-			   and self.ball.y_pos <= self.player1.y_pos + (self.player1.height / 2.0):
-				 self.ball.hitPlayer(self.player1.y_pos, self.player1.height)
-			else:
-				self.player2.score += 1
-				self.ball = Ball(self.speed)
-		elif self.ball.x_pos + self.ball.radius >= self.player2.x_pos - (self.player2.width / 2.0):
-			# ball is close to the right side
-			if self.ball.y_pos >= self.player2.y_pos - (self.player2.height / 2.0) \
-			   and self.ball.y_pos <= self.player2.y_pos + (self.player2.height / 2.0):
-				 # Ball is close to player 2
-				 self.ball.hitPlayer(self.player2.y_pos, self.player2.height)
-			else:
-				 # Ball is not close to player 2
-				self.player1.score += 1
-				self.ball = Ball(self.speed)
+		elif self.ballIsCloseToPlayer1():
+			self.ball.hitPlayer(self.player1.y_pos, self.player1.height)
+		elif self.ballIsCloseToPlayer2():
+			self.ball.hitPlayer(self.player2.y_pos, self.player2.height)
+		elif self.ball.x_pos <= 0:
+			self.player2.score += 1
+			self.ball = Ball(self.speed)
+		elif self.ball.x_pos >= self.width:
+			self.player1.score += 1
+			self.ball = Ball(self.speed)
 
 		####
 		# Update objects
