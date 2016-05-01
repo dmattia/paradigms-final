@@ -15,6 +15,13 @@ class ClientConnFactory(ClientFactory):
 	def buildProtocol(self, addr):
 		return  ClientConnection()
 
+def is_json(data):
+	try:
+		json.loads(data)
+		return True
+	except ValueError, e:
+		return False
+
 class ClientConnection (Protocol):
 	def __init__(self):
 		pygame.init()
@@ -26,9 +33,13 @@ class ClientConnection (Protocol):
 
 	def dataReceived(self, data):
 		# get game data sent over
-		try:
-			game = json.loads(data.split('?')[0])
-		except:
+		json_data = data.split('?', 1)[0]
+		if is_json(json_data):
+			game = json.loads(json_data)
+		else:
+			# This can happen when the transport stream is fragmented and the
+			# end of one json string is sent over that is incomplete
+			# This is uncommon, and can be ignored
 			return
 		p1 = game["players"]["p1"]
 		p2 = game["players"]["p2"]
@@ -55,7 +66,7 @@ class ClientConnection (Protocol):
 		keysPressed = pygame.key.get_pressed()
 		up = keysPressed[pygame.K_UP]
 		down = keysPressed[pygame.K_DOWN]
-		print str(up) + "|" + str(down)
+		#print str(up) + "|" + str(down)
 		self.transport.write( str(up) + "|" + str(down) + "?" )
 		
 	def connectionMade(self):
@@ -64,7 +75,6 @@ class ClientConnection (Protocol):
 	def connectionLost(self, reason):
 		reactor.stop()
 	
-
 if __name__ == '__main__':
 	reactor.connectTCP(server, int(sys.argv[1]), ClientConnFactory())
 	reactor.run()
