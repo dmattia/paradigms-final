@@ -147,8 +147,8 @@ class ClientConnection (Protocol):
 		win_label = myfont.render("GAME SERVER CONNECTION LOST", 1, self.white)
 		myfont = pygame.font.SysFont("monospace", 24)
 		exit_label = myfont.render("press any key to exit", 1, self.white)
-		self.screen.blit(connected_label, (100, 100))
-		self.screen.blit(waiting_label, (120, 200))
+		self.screen.blit(win_label, (100, 100))
+		self.screen.blit(exit_label, (120, 200))
 		pygame.display.flip()
 	
 		# wait 2 seconds then for key to exit
@@ -164,10 +164,9 @@ class ClientConnection (Protocol):
 		while True:
 			for event in pygame.event.get():
 				if event.type == QUIT or event.type == KEYDOWN:
-					self.transport.loseConnection()
 					pygame.quit()
 					reactor.stop()
-					return
+					os._exit()
 
 # try to connect to game server
 if __name__ == '__main__':
