@@ -6,7 +6,7 @@ import pygame
 from pygame.locals import *
 import sys
 
-server = 'student01.cse.nd.edu'
+server = 'student03.cse.nd.edu'
 port = 40075
 
 def getRect(x_pos, y_pos, width, height):
@@ -103,7 +103,7 @@ class ClientConnection (Protocol):
 			self.screen.blit(waiting_label, (112, 200))
 			pygame.display.flip()
 		elif key == 1:
-			self.tranport.write("one player")
+			self.transport.write("one player")
 		else:
 			pass
 			
