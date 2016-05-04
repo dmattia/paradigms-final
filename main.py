@@ -18,14 +18,16 @@ p1Server = None
 p2Server = None
 gs = None
 
-# cpu_player 0 means both are human
-# cpu_player 1 means player 1 is a cpu
-# cpu_player 2 means player 2 is a cpu
 class GameSpace:
+	""" An instance of a Pong game
+	"""
 	def __init__(self, cpu_player=0, cpu_difficulty=0):
 		self.size = self.width, self.height = 640, 480
 		self.speed = 12.0
 
+		# cpu_player 0 means both are human
+		# cpu_player 1 means player 1 is a cpu
+		# cpu_player 2 means player 2 is a cpu
 		if cpu_player == 1:
 			global player_one_connected
 			player_one_connected = True
@@ -40,6 +42,7 @@ class GameSpace:
 			self.player1 = Player(40, self, False)
 			self.player2 = Player(600, self, False)
 
+		# Choose the difficulty
 		if self.player1.is_cpu:
 			self.player1.cpu_movementAmount = self.player1.movementAmount * int(cpu_difficulty) / 7.0
 		if self.player2.is_cpu:
@@ -48,7 +51,7 @@ class GameSpace:
 		self.ball = Ball(self.speed)
 
 		self.lc = LoopingCall(self.game_loop_iterate)
-		self.lc.start(1.0/30)	
+		self.lc.start(1.0/30) # 30 fps	
 
 	def ballIsToTheWall(self):
 		""" Determines if the ball's y_pos is close to a wall
@@ -72,6 +75,8 @@ class GameSpace:
 			and self.ball.y_pos <= self.player2.getTop()
 
 	def game_loop_iterate(self):
+		""" Main game loop. Called at a rate of 30 fps.
+		"""
 		####
 		# Check for collision
 		####
@@ -88,6 +93,9 @@ class GameSpace:
 			self.player1.score += 1
 			self.ball = Ball(self.speed)
 
+		####
+		# Check if anyone won
+		####
 		if self.player1.score == 10:
 			global p1Server, p2Server
 			p1Server.transport.write("p1 win")
@@ -106,6 +114,9 @@ class GameSpace:
 		self.player2.tick(self.ball.y_pos)
 		self.ball.tick()
 
+		####
+		# Send updated data to clients
+		####
 		global p1Server, p2Server
 		if not self.player1.is_cpu:
 			p1Server.transport.write(self.to_json() + "?")
@@ -139,8 +150,11 @@ class P1Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
+		""" Called when player one sends data back to the server
+		"""
 		global gs
 		global player_one_connected, player_two_connected
+		# data.split(":")[-1] is the difficulty the player chose to play against in single player
 		if "one player:" in data:
 			gs = GameSpace(2, data.split(":")[-1])
 		elif data == "two players":
@@ -149,6 +163,7 @@ class P1Server(Protocol):
 				print "Both players connected"
 				gs = GameSpace(0)
 		else:
+			# Any other data received means that the data is keypress data from active gameplay
 			try:
 				upPressed = data.split("?")[0].split("|")[0]
 				downPressed = data.split("?")[0].split("|")[1]
@@ -166,6 +181,8 @@ class P1Server(Protocol):
 		print "Player 1 connected"
 
 	def connectionLost(self, reason):
+		""" Called when player 1 loses connection.  Automatically forfeits for player 1
+		"""
 		print "Connection lost to player 1"
 		global player_one_connected, player_two_connected, gs, p2Server
 		player_one_connected = False
@@ -183,8 +200,11 @@ class P2Server(Protocol):
 		self.addr = addr
 
 	def dataReceived(self, data):
+		""" Called when player two sends data back to the server
+		"""
 		global gs
 		global player_one_connected, player_two_connected
+		# data.split(":")[-1] is the difficulty the player chose to play against in single player
 		if "one player:" in data:
 			gs = GameSpace(2, data.split(":")[-1])
 		elif data == "two players":
@@ -193,15 +213,19 @@ class P2Server(Protocol):
 				print "Both players connected"
 				gs = GameSpace()
 		else:
+			# Any other data received means that the data is keypress data from active gameplay
 			try:
 				upPressed = data.split("?")[0].split("|")[0]
 				downPressed = data.split("?")[0].split("|")[1]
 			except IndexError, e:
 				return
-			if int(upPressed) and not gs.player2.is_cpu:
-				gs.player2.moveUp()
-			if int(downPressed) and not gs.player2.is_cpu:
-				gs.player2.moveDown()
+			try:
+				if int(upPressed) and not gs.player2.is_cpu:
+					gs.player2.moveUp()
+				if int(downPressed) and not gs.player2.is_cpu:
+					gs.player2.moveDown()
+			except ValueError, e:
+				return
 
 	def connectionMade(self):
 		print "Player 2 connected"
@@ -213,6 +237,8 @@ class P2Server(Protocol):
 			gs = GameSpace()
 
 	def connectionLost(self, reason):
+		""" Called when player 2 loses connection.  Automatically forfeits for player 2
+		"""
 		print "Connection lost to player 2"
 		global player_one_connected, player_two_connected, gs, p1Server
 		player_two_connected = False
