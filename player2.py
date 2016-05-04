@@ -11,6 +11,8 @@ import time
 server = 'student03.cse.nd.edu'
 port = 40083
 
+exited = False
+
 # returns the pygame rectangle of a player given its parameters
 def getRect(x_pos, y_pos, width, height):
 	return pygame.Rect(x_pos - width / 2, y_pos - height / 2, width, height)
@@ -39,8 +41,14 @@ class ClientConnection (Protocol):
 		self.screen = pygame.display.set_mode(self.size)
 
 	def dataReceived(self, data):
+		# check we're not shutting down
+		global exited
+		if exited:
+			return
+	
 		# player 1 won- display finish screen
-		if data == 'p1 win':
+		if "p1 win" in data:
+			exited = True
 			self.screen.fill(self.black)
 			myfont = pygame.font.SysFont("monospace", 32)
 			win_label = myfont.render("PLAYER 1 WON", 1, self.white)
@@ -54,8 +62,9 @@ class ClientConnection (Protocol):
 			time.sleep(2)
 			self.exitWait()
 		
-		# player 1 won- display finish screen
-		elif data == 'p2 win':
+		# player 2 won- display finish screen
+		elif "p2 win" in data:
+			exited = True
 			self.screen.fill(self.black)
 			myfont = pygame.font.SysFont("monospace", 32)
 			win_label = myfont.render("PLAYER 2 WON", 1, self.white)
@@ -70,7 +79,8 @@ class ClientConnection (Protocol):
 			self.exitWait()
 			
 		# player 1 forfeit- display finish screen
-		elif data == 'p1 forfeit':
+		elif "p1 forfeit" in data:
+			exited = True
 			self.screen.fill(self.black)
 			myfont = pygame.font.SysFont("monospace", 32)
 			win_label = myfont.render("PLAYER 1 FORFEITS", 1, self.white)
@@ -120,6 +130,7 @@ class ClientConnection (Protocol):
 		up = keysPressed[pygame.K_UP]
 		down = keysPressed[pygame.K_DOWN]
 		self.transport.write( str(up) + "|" + str(down) + "?" )
+		pygame.event.pump()
 
 	# connection established to the game server
 	def connectionMade(self):
@@ -135,6 +146,11 @@ class ClientConnection (Protocol):
 
 	# game server severed connection
 	def connectionLost(self, reason):
+		# check we're not shutting down
+		global exited
+		if exited:
+			return
+	
 		self.screen.fill(self.black)
 		myfont = pygame.font.SysFont("monospace", 32)
 		win_label = myfont.render("GAME SERVER CONNECTION LOST", 1, self.white)
