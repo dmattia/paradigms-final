@@ -7,16 +7,15 @@ from pygame.locals import *
 import sys
 import time
 
+# game server and player 1 port
 server = 'student03.cse.nd.edu'
 port = 40075
 
+# returns the pygame rectangle of a player given its parameters
 def getRect(x_pos, y_pos, width, height):
 	return pygame.Rect(x_pos - width / 2, y_pos - height / 2, width, height)
 
-class ClientConnFactory(ClientFactory):
-	def buildProtocol(self, addr):
-		return  ClientConnection()
-
+# checks whether a piece of data is valid json
 def is_json(data):
 	try:
 		json.loads(data)
@@ -24,6 +23,12 @@ def is_json(data):
 	except ValueError, e:
 		return False
 
+# player 1's connection factory
+class ClientConnFactory(ClientFactory):
+	def buildProtocol(self, addr):
+		return  ClientConnection()
+
+# player 2's connection to the game server
 class ClientConnection (Protocol):
 	def __init__(self):
 		pygame.init()
@@ -35,7 +40,7 @@ class ClientConnection (Protocol):
 
 	def dataReceived(self, data):
 		# player 1 won- display finish screen
-		if data == 'p1 win':
+		if "p1 win" in data:
 			self.screen.fill(self.black)
 			myfont = pygame.font.SysFont("monospace", 32)
 			win_label = myfont.render("PLAYER 1 WON", 1, self.white)
@@ -49,8 +54,8 @@ class ClientConnection (Protocol):
 			time.sleep(2)
 			self.exitWait()
 		
-		# player 1 won- display finish screen
-		elif data == 'p2 win':
+		# player 2 won- display finish screen
+		elif "p2 win" in data:
 			self.screen.fill(self.black)
 			myfont = pygame.font.SysFont("monospace", 32)
 			win_label = myfont.render("PLAYER 2 WON", 1, self.white)
@@ -107,24 +112,20 @@ class ClientConnection (Protocol):
 		score_label = myfont.render(str(p1["score"]) + " | " + str(p2["score"]), 1, self.white)
 		self.screen.blit(score_label, (260, 20))
 
+		# now, actually display everything
 		pygame.display.flip()
-		
-		for event in pygame.event.get():
-			if event.type == QUIT:
-				print "Quit event found"
-				#pygame.quit()
-		        #self.transport.loseConnection()
 
 		#send back key presses
 		keysPressed = pygame.key.get_pressed()
 		up = keysPressed[pygame.K_UP]
 		down = keysPressed[pygame.K_DOWN]
-		#print str(up) + "|" + str(down)
+		print str(up) + "|" + str(down) + "?"
 		self.transport.write( str(up) + "|" + str(down) + "?" )
-		
+
+	# connection established to the game server
 	def connectionMade(self):
 		print "connected to game server"
-		# draw menu
+		# display initial menu
 		self.screen.fill(self.black)
 		myfont = pygame.font.SysFont("monospace", 72)
 		title_label = myfont.render("Pong", 1, self.white)
@@ -135,9 +136,18 @@ class ClientConnection (Protocol):
 		self.screen.blit(select_label, (60, 250))
 		self.screen.blit(oneOrTwo_label, (250, 300))
 		pygame.display.flip()
-		key = self.waitForKey()
+		
+		# wait for the user to select 1 or 2 player mode
+		key = -1
+		while key != 1 and key != 2:
+			key = self.waitForKey()
+			
+		# 2 player mode selected
 		if key == 2:
+			# send 2 player mode notification to server
 			self.transport.write("two players")
+			
+			#draw waiting for p2 screen
 			self.screen.fill(self.black)
 			myfont = pygame.font.SysFont("monospace", 32)
 			connected_label = myfont.render("CONNECTED TO SERVER", 1, self.white)
@@ -145,7 +155,10 @@ class ClientConnection (Protocol):
 			self.screen.blit(connected_label, (120, 100))
 			self.screen.blit(waiting_label, (112, 200))
 			pygame.display.flip()
+
+		# 1 player mode selected
 		elif key == 1:
+			# display select difficulty screen
 			self.screen.fill(self.black)
 			myfont = pygame.font.SysFont("monospace", 32)
 			top_label = myfont.render("SELECT DIFFICULTY", 1, self.white)
@@ -153,12 +166,20 @@ class ClientConnection (Protocol):
 			self.screen.blit(top_label, (120, 100))
 			self.screen.blit(difficulty_label, (112, 200))
 			pygame.display.flip()
+			
+			# wait for difficulty selection
 			key = self.waitForKey()
+			
+			# notify server 1 player mode was selected and the difficulty
 			self.transport.write("one player:" + str(key))
+			
+		# something went wrong
 		else:
 			pass
 			
+	# wait for a number key to be pressed
 	def waitForKey(self):
+		# event loop to wait for key press or quit
 		while True:
 			for event in pygame.event.get():
 				if event.type == QUIT:
@@ -185,7 +206,9 @@ class ClientConnection (Protocol):
 				if event.type == KEYDOWN and event.key == K_9:
 					return 9
 		
+	# game server severed connection
 	def connectionLost(self, reason):
+		# give user message that the connection was lost
 		self.screen.fill(self.black)
 		myfont = pygame.font.SysFont("monospace", 32)
 		win_label = myfont.render("GAME SERVER CONNECTION LOST", 1, self.white)
@@ -195,7 +218,8 @@ class ClientConnection (Protocol):
 		self.screen.blit(exit_label, (120, 200))
 		pygame.display.flip()
 	
-		# wait 2 seconds then for key to exit
+		# wait 2 seconds then for user to press a key to exit
+		# same as normal game exit, but have already lost the connection
 		time.sleep(2)
 		while True:
 			for event in pygame.event.get():
@@ -203,16 +227,19 @@ class ClientConnection (Protocol):
 					pygame.quit()
 					reactor.stop()
 					return
-		
+
+	# wait for key to be pressed before exiting (normal)
 	def exitWait(self):
 		while True:
 			for event in pygame.event.get():
 				if event.type == QUIT or event.type == KEYDOWN:
+					# X button or any key pressed- shut everything down
 					self.transport.loseConnection()
 					pygame.quit()
 					reactor.stop()
 					return
 	
+# connect to the game server
 if __name__ == '__main__':
 	reactor.connectTCP(server, port, ClientConnFactory())
 	reactor.run()

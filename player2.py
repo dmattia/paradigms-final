@@ -114,13 +114,6 @@ class ClientConnection (Protocol):
 
 		# now, actually display everything
 		pygame.display.flip()
-		
-		#check for X button pressed
-		for event in pygame.event.get():
-			if event.type == QUIT:
-				print "Quit event found"
-				#pygame.quit()
-		        #self.transport.loseConnection()
 
 		#send back key presses for player movement
 		keysPressed = pygame.key.get_pressed()
@@ -152,6 +145,7 @@ class ClientConnection (Protocol):
 		pygame.display.flip()
 	
 		# wait 2 seconds then for key to exit
+		# same as normal game exit, but have already lost the connection
 		time.sleep(2)
 		while True:
 			for event in pygame.event.get():
@@ -160,13 +154,16 @@ class ClientConnection (Protocol):
 					reactor.stop()
 					return
 		
+	# wait for key to be pressed before exiting (normal)
 	def exitWait(self):
 		while True:
 			for event in pygame.event.get():
 				if event.type == QUIT or event.type == KEYDOWN:
+					# X button or any key pressed- shut everything down
+					self.transport.loseConnection()
 					pygame.quit()
 					reactor.stop()
-					os._exit()
+					return
 
 # try to connect to game server
 if __name__ == '__main__':
