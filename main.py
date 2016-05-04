@@ -167,13 +167,10 @@ class P1Server(Protocol):
 
 	def connectionLost(self, reason):
 		print "Connection lost to player 1"
-		global player_one_connected, player_two_connected
-		global p2Server
+		global player_one_connected, player_two_connected, gs, p2Server
 		player_one_connected = False
-		if gs is not None and gs.player1.score < 10 and gs.player2.score < 10:
+		if gs.player1.score < 10 and gs.player2.score < 10:
 			p2Server.transport.write("p1 forfeit")
-		elif gs is None:
-			print "Fuck"
 
 class P2ServerFactory(Factory):
 	def buildProtocol(self, addr):
@@ -217,9 +214,9 @@ class P2Server(Protocol):
 
 	def connectionLost(self, reason):
 		print "Connection lost to player 2"
-		global player_one_connected, player_two_connected
+		global player_one_connected, player_two_connected, gs, p1Server
 		player_two_connected = False
-		if player1.score < 10 and player2.score < 10:
+		if gs.player1.score < 10 and gs.player2.score < 10:
 			p1Server.transport.write("p2 forfeit")
 
 
