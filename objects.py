@@ -69,7 +69,7 @@ class Player(pygame.sprite.Sprite):
 class Ball(pygame.sprite.Sprite):
 	""" The ball of pong
 	"""
-	def __init__(self,mult):
+	def __init__(self, mult):
 		self.ticks_since_created = 0
 		self.x_pos = 320.0
 		self.y_pos = 240.0
@@ -114,6 +114,12 @@ class Ball(pygame.sprite.Sprite):
 		else:
 			self.x_pos += self.x_speed * self.speed_multiplier
 			self.y_pos += self.y_speed * self.speed_multiplier
+
+		# Apply gravity
+		height_in_pixels = 480 - self.y_pos
+		pixels_per_meter = 30
+		height_in_meters = height_in_pixels / pixels_per_meter
+		self.y_speed += (9.8 * height_in_meters) / 7000
 		
 	def getPos(self):
 		""" Returns: A tuple of the x and y center positions of the ball
