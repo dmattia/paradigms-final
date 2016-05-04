@@ -77,6 +77,8 @@ class GameSpace:
 	def game_loop_iterate(self):
 		""" Main game loop. Called at a rate of 30 fps.
 		"""
+		global p1Server, p2Server
+
 		####
 		# Check for collision
 		####
@@ -97,12 +99,10 @@ class GameSpace:
 		# Check if anyone won
 		####
 		if self.player1.score == 10:
-			global p1Server, p2Server
 			p1Server.transport.write("p1 win")
 			if not self.player2.is_cpu:
 				p2Server.transport.write("p1 win")
 		elif self.player2.score == 10:
-			global p1Server, p2Server
 			p1Server.transport.write("p2 win")
 			if not self.player2.is_cpu:
 				p2Server.transport.write("p2 win")
@@ -117,7 +117,6 @@ class GameSpace:
 		####
 		# Send updated data to clients
 		####
-		global p1Server, p2Server
 		if not self.player1.is_cpu:
 			p1Server.transport.write(self.to_json() + "?")
 		if not self.player2.is_cpu:
