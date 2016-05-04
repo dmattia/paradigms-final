@@ -20,6 +20,8 @@ gs = None
 
 class GameSpace:
 	""" An instance of a Pong game
+		
+		The data within any gamespace can be sent to a client for displaying
 	"""
 	def __init__(self, cpu_player=0, cpu_difficulty=0):
 		self.size = self.width, self.height = 640, 480
@@ -43,10 +45,14 @@ class GameSpace:
 			self.player2 = Player(600, self, False)
 
 		# Choose the difficulty
-		if self.player1.is_cpu:
-			self.player1.cpu_movementAmount = self.player1.movementAmount * int(cpu_difficulty) / 7.0
-		if self.player2.is_cpu:
-			self.player2.cpu_movementAmount = self.player2.movementAmount * int(cpu_difficulty) / 7.0
+		try:
+			difficulty = int(cpu_difficulty)
+			if self.player1.is_cpu:
+				self.player1.cpu_movementAmount = self.player1.movementAmount * difficulty / 7.0
+			if self.player2.is_cpu:
+				self.player2.cpu_movementAmount = self.player2.movementAmount * difficulty / 7.0
+		except ValueError, e:
+			self.player2.cpu_movementAmount = self.player2.movementAmount
 
 		self.ball = Ball(self.speed)
 
@@ -116,6 +122,10 @@ class GameSpace:
 
 		####
 		# Send updated data to clients
+		#
+		# Add a ? after so that individual json objects
+		# can be parsed if multiple json objects are
+		# send in the same TCP packet
 		####
 		if not self.player1.is_cpu:
 			p1Server.transport.write(self.to_json() + "?")

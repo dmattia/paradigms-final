@@ -8,9 +8,8 @@ import sys
 import time
 
 # game server and player 2 port
-server = '172.32.32.16'
 #server = 'localhost'
-#server = 'student03.cse.nd.edu'
+server = 'student03.cse.nd.edu'
 port = 40083
 
 exited = False

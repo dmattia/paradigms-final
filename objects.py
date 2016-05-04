@@ -58,8 +58,12 @@ class Player(pygame.sprite.Sprite):
 		if self.is_cpu:
 			if ball_y_pos > self.y_pos:
 				self.moveDown()
+				if ball_y_pos < self.y_pos:
+					self.y_pos = ball_y_pos
 			elif ball_y_pos < self.y_pos:
 				self.moveUp()
+				if ball_y_pos > self.y_pos:
+					self.y_pos = ball_y_pos
 			
 	def getRect(self):
 		""" Returns: the rect to display this player in
@@ -116,10 +120,12 @@ class Ball(pygame.sprite.Sprite):
 			self.y_pos += self.y_speed * self.speed_multiplier
 
 		# Apply gravity
+		""" Do not release for this version
 		height_in_pixels = 480 - self.y_pos
 		pixels_per_meter = 30
 		height_in_meters = height_in_pixels / pixels_per_meter
 		self.y_speed += (9.8 * height_in_meters) / 7000
+		"""
 		
 	def getPos(self):
 		""" Returns: A tuple of the x and y center positions of the ball
